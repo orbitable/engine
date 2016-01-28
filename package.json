@@ -1,0 +1,24 @@
+{
+  "name": "engine",
+  "version": "0.0.0",
+  "description": "An N-Body simulation library",
+  "main": "src/engine.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/orbitable/engine.git"
+  },
+  "keywords": [
+    "simulation"
+  ],
+  "author": "",
+  "contributors": [
+      {"name": "Benjamin Campbell", "email": "benji@benjica.com"}
+  ],
+  "bugs": {
+    "url": "https://github.com/orbitable/engine/issues"
+  },
+  "homepage": "https://github.com/orbitable/engine#readme"
+}
