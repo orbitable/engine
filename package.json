@@ -4,7 +4,7 @@
   "description": "An N-Body simulation library",
   "main": "src/engine.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/mocha/bin/mocha"
   },
   "repository": {
     "type": "git",
@@ -15,10 +15,18 @@
   ],
   "author": "",
   "contributors": [
-      {"name": "Benjamin Campbell", "email": "benji@benjica.com"}
+    {
+      "name": "Benjamin Campbell",
+      "email": "benji@benjica.com"
+    }
   ],
   "bugs": {
     "url": "https://github.com/orbitable/engine/issues"
   },
-  "homepage": "https://github.com/orbitable/engine#readme"
+  "homepage": "https://github.com/orbitable/engine#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "lodash": "^4.0.1",
+    "mocha": "^2.4.5"
+  }
 }
