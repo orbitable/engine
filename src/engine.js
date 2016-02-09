@@ -1,4 +1,4 @@
-module.exports = {}
+module.exports = Simulator;
 
 var Body = require('./body.js');
 var Vector = require('./vector.js');
