@@ -1,5 +1,5 @@
-var Body = require('./body.js');
-var Vector = require('./vector.js');
+//var Body = require('./body.js');
+//var Vector = require('./vector.js');
 
 /**
  * Constucts a new simulator with array of bodies
@@ -18,17 +18,19 @@ function Simulator(bodies) {
 
     this.resumed = false;
     this.timer = new Date();
-    this.frameTime = timer.getTime();  
-    this.deltaTime = 15;
+    this.frameTime = this.timer.getTime();  
+    this.startTime = this.frameTime;
+    this.deltaTime = 15.0;
+    this.step = 0;
 
 }
 
 function Simulator() {
 
     this.bodies = [
-        new Body(100, new Vector(-1000,0), new Vector(0,0), 10),
+        new Body(10, new Vector(-100,0), new Vector(0,0), 10),
         new Body(100, new Vector(-0,0)   , new Vector(0,0), 10),
-        new Body(100, new Vector(1000,0) , new Vector(0,0), 10)
+        new Body(12, new Vector(100,0) , new Vector(0,0), 10)
     ]
 
     this.G = 667.3;                 // Establish gravitational constant
@@ -36,8 +38,10 @@ function Simulator() {
 
     this.resumed = false;
     this.timer = new Date();
-    this.frameTime = timer.getTime();  
-    this.deltaTime = 15;
+    this.frameTime = this.timer.getTime();  
+    this.startTime = this.frameTime;
+    this.deltaTime = 15.0;
+    this.step = 0;
 
 }
 
@@ -55,7 +59,6 @@ Simulator.prototype.update = function() {
         // If not null
         if (this.bodies[a] != null) {
             var bodyA = this.bodies[a];
-            bodyA.resetForce();
 
             // For each body below bodyA
             for (var b = a+1; b < this.bodies.length; b++) {
@@ -111,8 +114,8 @@ Simulator.prototype.update = function() {
                         var tFy = Math.sin(theta) * tF;
 
                         // Adds force to body
-                        bodyA.addForce(tFx, tFy);
-                        bodyB.addForce(-tFx, -tFy);
+                        bodyA.addForce(new Vector(tFx, tFy));
+                        bodyB.addForce(new Vector(-tFx, -tFy));
                     }
                 }
                 
@@ -125,18 +128,19 @@ Simulator.prototype.update = function() {
     // this.resumed is set in resume(). 
     // This prevents the simulator from calculating a new deltaTime that would otherwise be however large, depending on pause duration.
     if (this.resumed) {
-        resumed = false;
+        this.resumed = false;
     } else {
-        timer = new Date();
-        deltaTime = timer.getTime() - frameTime; // TIME KEEPING STUFF
+        this.timer = new Date();
+        this.deltaTime = this.timer.getTime() - this.frameTime; // TIME KEEPING STUFF
     }
 
     // Now that all the forces have been calculated, we can apply them to the bodies to update their velocities and positions.
     for (var c = 0; c < this.bodies.length; c++) {
-            this.bodies[c].applyForce(deltaTime / 1000);
+            this.bodies[c].applyForce(this.deltaTime / 1000);
     }
 
-    frameTime = timer.getTime();
+    this.frameTime = this.timer.getTime();
+    this.step += 1;
     return;
 
 };
@@ -145,7 +149,7 @@ Simulator.prototype.update = function() {
  * Sets the resume flag so that the simulator knows not to use a large deltaTime when resuming
  *
  */
-Simulator.prototype.resume() {
+Simulator.prototype.resume = function () {
     this.resumed = true;
 }
 
@@ -237,7 +241,9 @@ Simulator.prototype.resume() {
  */
 Simulator.prototype.printState = function() {
 
-    console.log("-- CURRENT STATE --");
+    console.log("-- CURRENT STATE -- (" + this.step + ")");
+    console.log("dT: " + (this.deltaTime/1000.0));
+    console.log("Time Passed: " + ((this.timer.getTime() - this.startTime)/1000.0));
     for(var i = 0; i < this.bodies.length; i++) {
         if (this.bodies[i] != null) {
             console.log("ID: " + i + "\t " + this.bodies[i].toString());
@@ -269,4 +275,4 @@ Simulator.prototype.printState = function() {
 
 // };
 
-module.exports = Simulator;
+//module.exports = Simulator;
