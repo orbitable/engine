@@ -22,6 +22,15 @@ function Body(mass, position, velocity, radius) {
 }
 
 Body.prototype = {
+
+    /**
+     * Adds mass to the body.
+     *
+     * @param {int} mass - The mass to add
+     */
+    addMass: function(mass) {
+        this.mass = this.mass + mass;
+    },
     /**
      * Applies an additional force to the body.
      *
