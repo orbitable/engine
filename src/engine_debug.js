@@ -2,17 +2,26 @@
 
 
 var i = 0;
+var x = 0;
 
 var sim = new Simulator()
 
 sim.printState();
 
+while (x < 10) {
 
-while (i < 10000) {
-    sim.update();
-	i+=1;
+	i = 0;
+
+	while (i < 10) {
+	    sim.update(0.05);
+		i+=1;
+	}
+	x+=1;
+
+	sim.printState();
 }
 
-sim.printState();
 
-throw new Error();
+
+
+throw new Error("Complete");

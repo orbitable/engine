@@ -22,6 +22,7 @@ function Simulator(bodies) {
     this.startTime = this.frameTime;
     this.deltaTime = 15.0;
     this.step = 0;
+    this.simulationTime = 0.0;
 
 }
 
@@ -30,7 +31,15 @@ function Simulator() {
     this.bodies = [
         new Body(10, new Vector(-100,0), new Vector(0,0), 10),
         new Body(100, new Vector(-0,0)   , new Vector(0,0), 10),
-        new Body(12, new Vector(100,0) , new Vector(0,0), 10)
+        new Body(12, new Vector(100,0) , new Vector(0,0), 10),
+
+        new Body(10, new Vector(0,-100), new Vector(0,0), 10),
+        new Body(10, new Vector(100,100)   , new Vector(0,0), 10),
+        new Body(12, new Vector(0,100) , new Vector(0,0), 10),
+
+        new Body(10, new Vector(150,-200), new Vector(0,0), 10),
+        new Body(10, new Vector(-100,-100)   , new Vector(0,0), 10),
+        new Body(12, new Vector(-150,200) , new Vector(0,0), 10)
     ]
 
     this.G = 667.3;                 // Establish gravitational constant
@@ -42,13 +51,15 @@ function Simulator() {
     this.startTime = this.frameTime;
     this.deltaTime = 15.0;
     this.step = 0;
+    this.simulationTime = 0.0;
 
 }
 
 /**
  * Calculates a step in the simulation
+ * @param {int}  dT - the dT to use in integration
  */
-Simulator.prototype.update = function() {
+Simulator.prototype.update = function(dT) {
 
 
     //bodyDeleted = false; // This flag tracks if any body has been deleted
@@ -82,12 +93,12 @@ Simulator.prototype.update = function() {
 
                         // Body A is larger, absorb mass from body B and delete it.
                         if (bodyA.mass > bodyB.mass) {
-                            this.bodies[a].addMass(this.bodies[b].mass);
+                            this.bodies[a].addMass(bodyB.mass);
                             this.bodies[b] = null;
                         }
                          // Body B is larger, absorb mass from body A and delete it.
                         else {
-                            this.bodies[b].addMass(this.bodies[a].mass);
+                            this.bodies[b].addMass(bodyA.mass);
                             this.bodies[a] = null;
                         }
                     }
@@ -136,7 +147,11 @@ Simulator.prototype.update = function() {
 
     // Now that all the forces have been calculated, we can apply them to the bodies to update their velocities and positions.
     for (var c = 0; c < this.bodies.length; c++) {
-            this.bodies[c].applyForce(this.deltaTime / 1000);
+        if (this.bodies[c] != null) {
+            //this.bodies[c].applyForce(this.deltaTime / 1000); LEGACY 
+            this.bodies[c].applyForce(dT);
+            this.simulationTime += dT;
+        }
     }
 
     this.frameTime = this.timer.getTime();
@@ -242,8 +257,9 @@ Simulator.prototype.resume = function () {
 Simulator.prototype.printState = function() {
 
     console.log("-- CURRENT STATE -- (" + this.step + ")");
-    console.log("dT: " + (this.deltaTime/1000.0));
+    console.log("dT: " + this.deltaTime);
     console.log("Time Passed: " + ((this.timer.getTime() - this.startTime)/1000.0));
+    console.log("Simulation Time: " + this.simulationTime);
     for(var i = 0; i < this.bodies.length; i++) {
         if (this.bodies[i] != null) {
             console.log("ID: " + i + "\t " + this.bodies[i].toString());
