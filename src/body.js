@@ -15,7 +15,7 @@ function Body(mass, position, velocity, radius) {
     this.force = new Vector(0,0);
     this.mass = mass;
     this.radius = radius;
-    this.setMassRadius(mass,radius)
+    this.setMassRadius(mass,radius);
     this.position = position || new Vector(0,0);
     this.velocity = velocity || new Vector(0,0);
     this.luminosity = -1;
@@ -96,6 +96,6 @@ Body.prototype = {
     toString: function() {
         return "P: " + this.position.toString() + " V: " + this.velocity.toString() + " M: " + this.mass;
     }
-}
+};
 
 module.exports = Body;
