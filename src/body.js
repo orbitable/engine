@@ -1,4 +1,4 @@
-//var Vector = require('./vector.js');
+var Vector = require('./vector.js');
 
 /**
  * Constucts a new rigid body to include in a simluation system.
@@ -98,4 +98,4 @@ Body.prototype = {
     }
 }
 
-//module.exports = Body;
+module.exports = Body;

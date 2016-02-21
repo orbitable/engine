@@ -57,4 +57,4 @@ Vector.prototype = {
     }
 }
 
-//module.exports = Vector;
+module.exports = Vector;

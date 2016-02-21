@@ -1,5 +1,5 @@
-//var Body = require('./body.js');
-//var Vector = require('./vector.js');
+var Body = require('./body.js');
+var Vector = require('./vector.js');
 
 /**
  * Constucts a new simulator with array of bodies
@@ -291,4 +291,4 @@ Simulator.prototype.printState = function() {
 
 // };
 
-//module.exports = Simulator;
+module.exports = Simulator;
