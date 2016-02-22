@@ -1,5 +1,5 @@
-//var Body = require('./body.js');
-//var Vector = require('./vector.js');
+var Body = require('./body.js');
+var Vector = require('./vector.js');
 
 /**
  * Constucts a new simulator with array of bodies
@@ -11,7 +11,7 @@
 
 function Simulator(bodies) {
 
-    this.bodies = bodies
+    this.bodies = bodies;
 
     this.G = 667.3;                 // Establish gravitational constant
     this.PI2 = Math.PI * 2;         // Establish this.PI2 constant
@@ -40,7 +40,7 @@ function Simulator() {
         new Body(10, new Vector(150,-200), new Vector(0,0), 10),
         new Body(10, new Vector(-100,-100)   , new Vector(0,0), 10),
         new Body(12, new Vector(-150,200) , new Vector(0,0), 10)
-    ]
+    ];
 
     this.G = 667.3;                 // Establish gravitational constant
     this.PI2 = Math.PI * 2;         // Establish this.PI2 constant
@@ -68,7 +68,7 @@ Simulator.prototype.update = function(dT) {
     for (var a = 0; a < this.bodies.length-1; a++) {
 
         // If not null
-        if (this.bodies[a] != null) {
+        if (this.bodies[a] !== null) {
             var bodyA = this.bodies[a];
 
             // For each body below bodyA
@@ -82,7 +82,7 @@ Simulator.prototype.update = function(dT) {
                 var bodyB = this.bodies[b];
 
                 // If not null
-                 if (this.bodies[b] != null) {
+                 if (this.bodies[b] !== null) {
 
                     var r = bodyA.position.distanceTo(bodyB.position);
 
@@ -147,7 +147,7 @@ Simulator.prototype.update = function(dT) {
 
     // Now that all the forces have been calculated, we can apply them to the bodies to update their velocities and positions.
     for (var c = 0; c < this.bodies.length; c++) {
-        if (this.bodies[c] != null) {
+        if (this.bodies[c] !== null) {
             //this.bodies[c].applyForce(this.deltaTime / 1000); LEGACY 
             this.bodies[c].applyForce(dT);
             this.simulationTime += dT;
@@ -166,7 +166,7 @@ Simulator.prototype.update = function(dT) {
  */
 Simulator.prototype.resume = function () {
     this.resumed = true;
-}
+};
 
 // Simulator.prototype.initialize = function() {
 //     var initBodies = new Array(this.bodies.length);
@@ -261,7 +261,7 @@ Simulator.prototype.printState = function() {
     console.log("Time Passed: " + ((this.timer.getTime() - this.startTime)/1000.0));
     console.log("Simulation Time: " + this.simulationTime);
     for(var i = 0; i < this.bodies.length; i++) {
-        if (this.bodies[i] != null) {
+        if (this.bodies[i] !== null) {
             console.log("ID: " + i + "\t " + this.bodies[i].toString());
         }
         else {
@@ -291,4 +291,4 @@ Simulator.prototype.printState = function() {
 
 // };
 
-//module.exports = Simulator;
+module.exports = Simulator;

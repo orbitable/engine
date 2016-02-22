@@ -55,6 +55,6 @@ Vector.prototype = {
     toString: function() {
         return "(" + this.x + "," + this.y + ")";
     }
-}
+};
 
-//module.exports = Vector;
+module.exports = Vector;
