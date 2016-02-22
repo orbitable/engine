@@ -19,6 +19,7 @@ function Body(mass, position, velocity, radius) {
     this.position = position || new Vector(0,0);
     this.velocity = velocity || new Vector(0,0);
     this.luminosity = -1;
+    this.exists = true;
 }
 
 Body.prototype = {

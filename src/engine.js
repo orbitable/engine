@@ -67,8 +67,8 @@ Simulator.prototype.update = function(dT) {
     // For each body
     for (var a = 0; a < this.bodies.length-1; a++) {
 
-        // If not null
-        if (this.bodies[a] !== null) {
+        // If exists
+        if (this.bodies[a].exists) {
             var bodyA = this.bodies[a];
 
             // For each body below bodyA
@@ -81,8 +81,8 @@ Simulator.prototype.update = function(dT) {
 
                 var bodyB = this.bodies[b];
 
-                // If not null
-                 if (this.bodies[b] !== null) {
+                // If exists
+                 if (this.bodies[b].exists) {
 
                     var r = bodyA.position.distanceTo(bodyB.position);
 
@@ -94,12 +94,12 @@ Simulator.prototype.update = function(dT) {
                         // Body A is larger, absorb mass from body B and delete it.
                         if (bodyA.mass > bodyB.mass) {
                             this.bodies[a].addMass(bodyB.mass);
-                            this.bodies[b] = null;
+                            this.bodies[b].exists = false;
                         }
                          // Body B is larger, absorb mass from body A and delete it.
                         else {
                             this.bodies[b].addMass(bodyA.mass);
-                            this.bodies[a] = null;
+                            this.bodies[a].exists = false;
                         }
                     }
 
@@ -147,7 +147,7 @@ Simulator.prototype.update = function(dT) {
 
     // Now that all the forces have been calculated, we can apply them to the bodies to update their velocities and positions.
     for (var c = 0; c < this.bodies.length; c++) {
-        if (this.bodies[c] !== null) {
+        if (this.bodies[c].exists) {
             //this.bodies[c].applyForce(this.deltaTime / 1000); LEGACY 
             this.bodies[c].applyForce(dT);
             this.simulationTime += dT;
@@ -168,87 +168,7 @@ Simulator.prototype.resume = function () {
     this.resumed = true;
 };
 
-// Simulator.prototype.initialize = function() {
-//     var initBodies = new Array(this.bodies.length);
-//     for(var i = 0; i < this.bodies.length; i++) {
-//         initBodies[i] = this.bodies[i].serializeInitial();
-//     }
-//     return initBodies;
-// };
 
-// Simulator.prototype.load = function(b) {
-//     this.bodies = new Array(b.length);
-//     for(var i = 0; i < b.length; i++) {
-//         this.bodies[i] = new Body( b[i][1], b[i][2],  b[i][3],   b[i][4], b[i][5], b[i][0], b[i][7]);
-//         this.bodies[i].c = b[i][6];
-//     }
-// };
-
-// Simulator.prototype.getDistance = function(v1,v2) {
-
-//     return Math.sqrt(Math.pow(v2.x-v1.x,2) + Math.pow(v2.y-v1.y,2));
-
-// };
-
-// Simulator.prototype.addBody = function(x,y,xx,yy,m,userID) {
-
-//     var newList = new Array(this.bodies.length+1);
-//     for(var i = 0; i < this.bodies.length; i++) {
-//         newList[i] = this.bodies[i];
-//         newList[i].bodyID = i;
-//     }
-//     newList[newList.length-1] = new Body(x,y,xx,yy,m,newList.length-1,userID);
-
-//     this.bodies = newList;
-
-// };
-
-// Simulator.prototype.destroyBody = function(bodyID) {
-
-//     var newList = new Array(this.bodies.length-1);
-//     var counter = 0;
-//     for(var i = 0; i < this.bodies.length; i++) {
-//         if (this.bodies[i].bodyID != bodyID) {
-//             newList[counter] = this.bodies[i];
-//             newList[counter].bodyID = counter;
-//             counter += 1;
-//         }
-//     }
-
-//     this.bodies = newList;
-
-
-// };
-
-// Simulator.prototype.removeNulls = function() {
-
-//     console.log("BEFORE");
-//     this.printState();
-
-//     var nullCount = 0;
-//     for(var a = 0; a < this.bodies.length; a++) {
-//         if (this.bodies[a] == null) {nullCount += 1;}
-//     }
-
-//     var newList = new Array(this.bodies.length-1-nullCount);
-//     var counter = 0;
-//     for(var i = 0; i < this.bodies.length; i++) {
-//         if (this.bodies[i] != null) {
-//             newList[counter] = this.bodies[i];
-//             newList[counter].bodyID = counter;
-//             counter += 1;
-//         }
-//     }
-
-//     this.bodies = newList;
-
-//     console.log("AFTER");
-//     this.printState();
-
-//     // pip install fabric
-//     // fab branch: [branch name]
-
-// };
 
 /**
  * Prints the state of bodies in the scene
@@ -261,34 +181,15 @@ Simulator.prototype.printState = function() {
     console.log("Time Passed: " + ((this.timer.getTime() - this.startTime)/1000.0));
     console.log("Simulation Time: " + this.simulationTime);
     for(var i = 0; i < this.bodies.length; i++) {
-        if (this.bodies[i] !== null) {
+        if (this.bodies[i].exists) {
             console.log("ID: " + i + "\t " + this.bodies[i].toString());
         }
         else {
-            console.log("ID: " + i + "\t (null)");
+            console.log("ID: " + i + "\t (destroyed)");
         }
     }
     console.log("");
 
 };
-
-
-
-// Simulator.prototype.reset = function() {
-
-//     this.bodies = new Array(this.initialState.length);
-//     for(var i = 0; i < this.bodies.length; i++) {
-//         this.bodies[i] = this.initialState[i].cloneBody();
-//     }
-
-// };
-
-// Simulator.prototype.saveInitialState = function() {
-//     this.initialState = new Array(this.bodies.length);
-//     for(var i = 0; i < this.bodies.length; i++) {
-//         this.initialState[i] = this.bodies[i].cloneBody();
-//     }
-
-// };
 
 module.exports = Simulator;
