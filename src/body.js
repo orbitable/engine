@@ -96,6 +96,15 @@ Body.prototype = {
      */
     toString: function() {
         return "P: " + this.position.toString() + " V: " + this.velocity.toString() + " M: " + this.mass;
+    },
+    /**
+     * Sets exists flag to false and sets physical attributes to 0
+     */
+    destroy: function() {
+        this.radius = 0;
+        //this.mass = 0;
+        //this.density = 0;
+        this.exists = false;
     }
 };
 

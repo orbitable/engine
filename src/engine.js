@@ -94,12 +94,12 @@ Simulator.prototype.update = function(dT) {
                         // Body A is larger, absorb mass from body B and delete it.
                         if (bodyA.mass > bodyB.mass) {
                             this.bodies[a].addMass(bodyB.mass);
-                            this.bodies[b].exists = false;
+                            this.bodies[b].destroy();
                         }
                          // Body B is larger, absorb mass from body A and delete it.
                         else {
                             this.bodies[b].addMass(bodyA.mass);
-                            this.bodies[a].exists = false;
+                            this.bodies[a].destroy();
                         }
                     }
 
