@@ -30,7 +30,7 @@ Body.prototype = {
      * @param {int} mass - The mass to add
      */
     addMass: function(mass) {
-        this.mass = this.mass + mass;
+        this.setMass(this.mass + mass);
     },
     /**
      * Applies an additional force to the body.
