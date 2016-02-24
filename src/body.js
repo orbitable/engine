@@ -13,9 +13,13 @@ var Vector = require('./vector.js');
  */
 function Body(mass, position, velocity, radius) {
     this.force = new Vector(0,0);
-    this.mass = mass;
-    this.radius = radius;
-    this.setMassRadius(mass,radius);
+    if (radius == null) {
+        this.density  = 0.002;
+        this.setMass(mass);
+    }
+    else {
+        this.setMassRadius(mass,radius);
+    }
     this.position = position || new Vector(0,0);
     this.velocity = velocity || new Vector(0,0);
     this.luminosity = -1;
@@ -79,7 +83,12 @@ Body.prototype = {
     setMass: function(mass) {
         this.mass = mass;
         //this.radius = (0.62035 * Math.pow(this.density, (1/3)))/(Math.pow(this.mass, (1/3)));
-        this.radius = 0.62035049090 * Math.pow((this.mass/this.density),(1/3));
+        if (this.density != 0) {
+            this.radius = 0.62035049090 * Math.pow((this.mass/this.density),(1/3));
+        }  
+        else {
+            this.destroy();
+        }
     },
     /**
      * Updates the body's mass and radius. Updates the density accordingly.

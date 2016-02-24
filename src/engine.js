@@ -29,17 +29,17 @@ function Simulator(bodies) {
 function Simulator() {
 
     this.bodies = [
-        new Body(10, new Vector(-100,0), new Vector(0,0), 10),
-        new Body(100, new Vector(-0,0)   , new Vector(0,0), 10),
-        new Body(12, new Vector(100,0) , new Vector(0,0), 10),
+        new Body(10, new Vector(-100,0), new Vector(0,12), null),
+        new Body(100, new Vector(-0,0)   , new Vector(0,0), null),
+        new Body(12, new Vector(100,0) , new Vector(0,-12), null),
 
-        new Body(10, new Vector(0,-100), new Vector(0,0), 10),
-        new Body(10, new Vector(100,100)   , new Vector(0,0), 10),
-        new Body(12, new Vector(0,100) , new Vector(0,0), 10),
+        new Body(10, new Vector(0,-100), new Vector(12,0), null),
+        new Body(10, new Vector(100,100)   , new Vector(8,6), null),
+        new Body(12, new Vector(0,100) , new Vector(-12,0), null),
 
-        new Body(10, new Vector(150,-200), new Vector(0,0), 10),
-        new Body(10, new Vector(-100,-100)   , new Vector(0,0), 10),
-        new Body(12, new Vector(-150,200) , new Vector(0,0), 10)
+        new Body(10, new Vector(150,-200), new Vector(8,1), null),
+        new Body(10, new Vector(-100,-100)   , new Vector(0,0), null),
+        new Body(12, new Vector(-150,200) , new Vector(1,8), null)
     ];
 
     this.G = 667.3;                 // Establish gravitational constant
