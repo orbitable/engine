@@ -28,19 +28,7 @@ function Simulator(bodies) {
 
 function Simulator() {
 
-    this.bodies = [
-        new Body(10, new Vector(-100,0), new Vector(0,12), null),
-        new Body(100, new Vector(-0,0)   , new Vector(0,0), null),
-        new Body(12, new Vector(100,0) , new Vector(0,-12), null),
-
-        new Body(10, new Vector(0,-100), new Vector(12,0), null),
-        new Body(10, new Vector(100,100)   , new Vector(8,6), null),
-        new Body(12, new Vector(0,100) , new Vector(-12,0), null),
-
-        new Body(10, new Vector(150,-200), new Vector(8,1), null),
-        new Body(10, new Vector(-100,-100)   , new Vector(0,0), null),
-        new Body(12, new Vector(-150,200) , new Vector(1,8), null)
-    ];
+    this.bodies = [];
 
     this.G = 667.3;                 // Establish gravitational constant
     this.PI2 = Math.PI * 2;         // Establish this.PI2 constant
@@ -54,6 +42,24 @@ function Simulator() {
     this.simulationTime = 0.0;
 
 }
+
+var parseBody = function (body) {
+  if (body instanceof Body) return body;
+
+  var position = new Vector(body.position.x, body.position.y);
+  var velocity = new Vector(body.velocity.x, body.velocity.y);
+  return new Body(body.radius, position, velocity, null);
+};
+
+/**
+ * Resests the current simulation with a new set of bodies.
+ *
+ * @param {array} bodies - A collection of body objects
+ */
+Simulator.prototype.reset = function(bodies) {
+  bodies = bodies || [];
+  this.bodies = bodies.map(parseBody);
+};
 
 /**
  * Calculates a step in the simulation

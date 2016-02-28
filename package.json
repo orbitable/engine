@@ -4,7 +4,7 @@
   "description": "An N-Body simulation library",
   "main": "src/engine.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha"
+    "test": "istanbul cover node_modules/mocha/bin/_mocha && codecov"
   },
   "repository": {
     "type": "git",
@@ -30,6 +30,8 @@
   "homepage": "https://github.com/orbitable/engine#readme",
   "devDependencies": {
     "chai": "^3.5.0",
+    "codecov": "^1.0.1",
+    "istanbul": "^0.4.2",
     "lodash": "^4.0.1",
     "mocha": "^2.4.5"
   }
