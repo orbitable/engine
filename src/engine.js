@@ -26,11 +26,29 @@ function Simulator(bodies) {
 
 }
 
+/**
+ * Returns a Number given a number in scientific notation format
+ *
+ * @param {Number}  b   - The base of the scientific notation i.e. b * 10 ^ e
+ * @param {Number}  e   - The exponent of the scientific notation i.e. b * 10 ^ e
+
+ */
+
+function bigNum(b,e) {
+    return b * Math.pow(10,e);
+}
+
 function Simulator() {
 
     this.bodies = [];
 
-    this.G = 667.3;                 // Establish gravitational constant
+    // This chunk creates an earth-sun orbit
+    // this.bodies = [
+    //     new Body(bigNum(5.9721986,24),new Vector(bigNum(1.483,11),0.0),new Vector(0.0,29722),bigNum(6.3674447,6)), // EARTH
+    //     new Body(bigNum(1.988435,30),new Vector(0.0,0.0),new Vector(0.0,0.0),bigNum(6.955,8)) // SUN
+    // ];
+
+    this.G = bigNum(6.674,-11);             // Establish gravitational constant
     this.PI2 = Math.PI * 2;         // Establish this.PI2 constant
 
     this.resumed = false;
