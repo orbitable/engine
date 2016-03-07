@@ -13,7 +13,7 @@ function Simulator(bodies) {
 
     this.bodies = bodies;
 
-    this.G = 667.3;                 // Establish gravitational constant
+    this.G = bigNum(6.674,-11);     // Establish gravitational constant
     this.PI2 = Math.PI * 2;         // Establish this.PI2 constant
 
     this.resumed = false;
