@@ -1,6 +1,6 @@
 {
   "name": "engine",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "An N-Body simulation library",
   "main": "src/engine.js",
   "scripts": {
