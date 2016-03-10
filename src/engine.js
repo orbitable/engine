@@ -61,22 +61,23 @@ function Simulator() {
 
 }
 
-var parseBody = function (body) {
-  if (body instanceof Body) return body;
-
-  var position = new Vector(body.position.x, body.position.y);
-  var velocity = new Vector(body.velocity.x, body.velocity.y);
-  return new Body(body.radius, position, velocity, null);
-};
-
 /**
  * Resests the current simulation with a new set of bodies.
  *
  * @param {array} bodies - A collection of body objects
  */
 Simulator.prototype.reset = function(bodies) {
+
   bodies = bodies || [];
-  this.bodies = bodies.map(parseBody);
+
+  this.bodies = bodies.map(function(body) {
+    if (body instanceof Body) return body;
+
+    var position = new Vector(body.position.x, body.position.y);
+    var velocity = new Vector(body.velocity.x, body.velocity.y);
+
+    return new Body(body.mass, position, velocity, body.radius);
+  });
 };
 
 /**
