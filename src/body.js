@@ -11,9 +11,9 @@ var Vector = require('./vector.js');
  * @param {int}  density    - The initial unit density of the body
  * @param {int}  luminosity - The initial unit luminosity of the body
  */
-function Body(mass, position, velocity, radius) {
+function Body(mass, position, velocity, radius, luminosity) {
     this.force = new Vector(0,0);
-    if (radius == null) {
+    if (radius === null) {
         this.density  = 0.002;
         this.setMass(mass);
     }
@@ -22,7 +22,7 @@ function Body(mass, position, velocity, radius) {
     }
     this.position = position || new Vector(0,0);
     this.velocity = velocity || new Vector(0,0);
-    this.luminosity = -1;
+    this.luminosity = luminosity || 0;
     this.exists = true;
 }
 
