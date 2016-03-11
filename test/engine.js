@@ -13,7 +13,8 @@ describe('Simulation', function() {
       mass: 1,
       position: {x: 1, y: 2},
       radius: 1,
-      velocity: {x: 3, y: 4}
+      velocity: {x: 3, y: 4},
+      luminosity: 1234
     };
 
     simulation.reset([body]);
@@ -29,5 +30,6 @@ describe('Simulation', function() {
     expect(parsedBody.velocity.x).to.equal(3);
     expect(parsedBody.velocity.y).to.equal(4);
     expect(parsedBody.density).to.be.a('number');
+    expect(parsedBody.luminosity).to.equal(1234);
   });
 });

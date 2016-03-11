@@ -76,7 +76,7 @@ Simulator.prototype.reset = function(bodies) {
     var position = new Vector(body.position.x, body.position.y);
     var velocity = new Vector(body.velocity.x, body.velocity.y);
 
-    return new Body(body.mass, position, velocity, body.radius);
+    return new Body(body.mass, position, velocity, body.radius, body.luminosity);
   });
 };
 
