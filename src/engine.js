@@ -71,10 +71,18 @@ Simulator.prototype.assignIDs = function() {
  */
 
 Simulator.prototype.addBody = function(body) {
+    
+    if (body.position) {
+        var position = new Vector(body.position.x, body.position.y);
+    }
+    if (body.velocity) {
+        var velocity = new Vector(body.velocity.x, body.velocity.y);
+    }
+    
     var newBody = new Body(
         body.mass,
-        body.position,
-        body.velocity,
+        position,
+        velocity,
         body.radius,
         body.luminosity
     ); 
@@ -89,13 +97,9 @@ Simulator.prototype.addBody = function(body) {
  */
 
 Simulator.prototype.deleteBody = function(id) {
-    this.bodies
-        .filter(function(body) { 
-            body.id === id; 
-        })
-        .forEach(function(body) { 
-            body.destroy(); 
-        });
+    this.bodies = this.bodies.filter(function(body) { 
+        return (body.id != id); 
+    });
 }
 
 /**
@@ -173,25 +177,23 @@ Simulator.prototype.update = function(dT) {
 
 
     // Now that all the forces have been calculated, we can apply them to the bodies to update their velocities and positions.
-    for (var c = 0; c < this.bodies.length; c++) {
-        if (this.bodies[c].exists) {
-            this.bodies[c].applyForce(dT);
+    this.bodies.forEach(function(body) {
+        if (body.exists) {
+            body.applyForce(dT);
             this.simulationTime += dT;
         }
-    }
+    });
 
     this.step += 1;
     return;
 
 };
 
-
-
-
 /**
  * Prints the state of bodies in the scene
  *
  */
+
 Simulator.prototype.printState = function() {
 
     console.log("-- CURRENT STATE -- (" + this.step + ")");
