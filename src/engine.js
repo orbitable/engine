@@ -103,6 +103,78 @@ Simulator.prototype.deleteBody = function(id) {
 }
 
 /**
+ * Returns true if bodies are colliding, false otherwise
+ * @param {Body}  bodyA - first Body
+ * @param {Body}  bodyB - other Body
+ * @param {Number}  distance - distance between bodies
+ */
+
+Simulator.prototype.checkCollision = function(bodyA,bodyB,distance) {
+    return (distance < bodyA.radius + bodyB.radius);
+    //return (distance < Math.max(bodyA.radius, bodyB.radius)); ALTERNATIVE OPTION
+}
+
+/**
+ * Applies result of collision between two bodies
+ * @param {Body}  bodyA - first Body
+ * @param {Body}  bodyB - other Body
+ */
+
+Simulator.prototype.applyCollision = function(bodyA,bodyB) {
+    // Body A is larger, absorb mass from body B and delete it.
+    if (bodyA.mass > bodyB.mass) {
+        bodyA.addMass(bodyB.mass);
+        bodyB.destroy();
+    }
+    // Body B is larger, absorb mass from body A and delete it.
+    else {
+        bodyB.addMass(bodyA.mass);
+        bodyA.destroy();
+    }
+}
+
+/**
+ * Returns angle in radians from bodyA to bodyB
+ * @param {Body}  bodyA - first Body
+ * @param {Body}  bodyB - other Body
+ */
+
+Simulator.prototype.getAngle = function(bodyA,bodyB) {
+    var theta = Math.atan((bodyB.position.y - bodyA.position.y) / (bodyB.position.x - bodyA.position.x));
+    if (bodyB.position.x < bodyA.position.x) {
+        theta += Math.PI;
+    }
+    if (theta >= this.PI2) {
+        theta -= this.PI2;
+    }
+    if (theta < 0) {
+        theta += this.PI2;
+    }
+    return theta;
+}
+
+/**
+ * Returns force magnitude given masses and distance
+ * @param {Body}  massA - first Body mass
+ * @param {Body}  massB - other Body mass
+ * @param {Number} distance - distance between bodies
+ */
+
+Simulator.prototype.getGravity = function(massA,massB,distance) {
+    return this.G * (massA * massB) / Math.pow(distance, 2);
+}
+
+/**
+ * Returns a vector with given angle and magnitude
+ * @param {Number}  angle - angle
+ * @param {Number}  magnitude - magnitude
+ */
+
+Simulator.prototype.getVector = function(angle,magnitude) {
+   return new Vector(Math.cos(angle) * magnitude, Math.sin(angle) * magnitude);
+}
+
+/**
  * Calculates a step in the simulation
  * @param {int}  dT - the dT to use in integration (in seconds)
  */
@@ -119,54 +191,31 @@ Simulator.prototype.update = function(dT) {
             // For each body below bodyA
             for (var b = a+1; b < this.bodies.length; b++) {
 
-                var bodyB = this.bodies[b];
-
                 // If exists
                  if (this.bodies[b].exists) {
+                    var bodyB = this.bodies[b];
 
-                    var r = bodyA.position.distanceTo(bodyB.position);
+                    var distance = bodyA.position.distanceTo(bodyB);
 
                     // If collision
-                    if (r < Math.max(bodyA.radius, bodyB.radius)) {
+                    if (this.checkCollision(bodyA,bodyB,distance)) {
 
-                        //bodyDeleted = true;
-
-                        // Body A is larger, absorb mass from body B and delete it.
-                        if (bodyA.mass > bodyB.mass) {
-                            this.bodies[a].addMass(bodyB.mass);
-                            this.bodies[b].destroy();
-                        }
-                         // Body B is larger, absorb mass from body A and delete it.
-                        else {
-                            this.bodies[b].addMass(bodyA.mass);
-                            this.bodies[a].destroy();
-                        }
+                        this.applyCollision(bodyA,bodyB);
                     }
 
                     // If no collision
                     else {
 
                     	// Find the direction t
-                        var theta = Math.atan((bodyB.position.y - bodyA.position.y) / (bodyB.position.x - bodyA.position.x));
-                        if (bodyB.position.x < bodyA.position.x) {
-                            theta += Math.PI;
-                        }
-                        if (theta >= this.PI2) {
-                            theta -= this.PI2;
-                        }
-                        if (theta < 0) {
-                            theta += this.PI2;
-                        }
-                        // Gravitational function { (G * m1 * m2)/(r^2) }
-                        var tF = this.G * (bodyA.mass * bodyB.mass) / Math.pow(r, 2);
-
+                        var forceAngle = this.getAngle(bodyA,bodyB);
+                        // Get magnitude of force for gravitational function 
+                        var forceMagnitude = this.getGravity(bodyA.mass,bodyB.mass,distance);
                         // Apply magnitude to vector using direction theta
-                        var tFx = Math.cos(theta) * tF;
-                        var tFy = Math.sin(theta) * tF;
+                        var forceVector = this.getVector(forceAngle,forceMagnitude);
 
                         // Adds force to body
-                        bodyA.addForce(new Vector(tFx, tFy));
-                        bodyB.addForce(new Vector(-tFx, -tFy));
+                        bodyA.addForce(forceVector);
+                        bodyB.addForce(forceVector.scalarProduct(-1));
                     }
                 }
                 
