@@ -24,7 +24,6 @@ function Simulator() {
  *
  * @param {Number}  b   - The base of the scientific notation i.e. b * 10 ^ e
  * @param {Number}  e   - The exponent of the scientific notation i.e. b * 10 ^ e
-
  */
 
 function bigNum(b,e) {
@@ -56,12 +55,13 @@ Simulator.prototype.reset = function(bodies) {
 /**
  * Reassigns all bodyIDS to ensure they are unique
  */
+
 Simulator.prototype.assignIDs = function() {
     this.idCounter = 0;
-    for (var d = 0; d < this.bodies.length; d++) {
-        this.bodies[d].id = this.idCounter;
+    this.bodies.forEach(function(body) { 
+        body.id = this.idCounter;
         this.idCounter += 1;
-    }
+    });
 };
 
 /**
@@ -70,12 +70,17 @@ Simulator.prototype.assignIDs = function() {
  * @param {Number}  y - y position coordinate
  */
 
-Simulator.prototype.addBody = function(x,y) {
-    var newBody = new Body(null, new Vector(x,y)); 
+Simulator.prototype.addBody = function(body) {
+    var newBody = new Body(
+        body.mass,
+        body.position,
+        body.velocity,
+        body.radius,
+        body.luminosity
+    ); 
     newBody.id = this.idCounter;
     this.idCounter += 1;
     this.bodies.push(newBody); 
-    
 }
 
 /**
@@ -84,23 +89,21 @@ Simulator.prototype.addBody = function(x,y) {
  */
 
 Simulator.prototype.deleteBody = function(id) {
-    for (var b = 0; b < this.bodies.length; b++) {
-        if(this.bodies[b].id == id) {
-            this.bodies[b].destroy();
-            return;
-        }
-    }
-    console.error("Unabled to delete body with id: " + id);
+    this.bodies
+        .filter(function(body) { 
+            body.id === id; 
+        })
+        .forEach(function(body) { 
+            body.destroy(); 
+        });
 }
 
 /**
  * Calculates a step in the simulation
  * @param {int}  dT - the dT to use in integration (in seconds)
  */
+
 Simulator.prototype.update = function(dT) {
-
-
-    //bodyDeleted = false; // This flag tracks if any body has been deleted
 
     // For each body
     for (var a = 0; a < this.bodies.length-1; a++) {
@@ -111,11 +114,6 @@ Simulator.prototype.update = function(dT) {
 
             // For each body below bodyA
             for (var b = a+1; b < this.bodies.length; b++) {
-
-            	// If bodies are the same [THIS SHOULDN'T BE NECESSARY]
-                if (a == b) {
-                    console.log("Comparing body to self");
-                }
 
                 var bodyB = this.bodies[b];
 
