@@ -11,7 +11,7 @@ function Simulator() {
     this.idCounter = 0
     this.bodies = [];
     
-    this.G = bigNum(6.674,-11);             // Establish gravitational constant
+    this.G = this.bigNum(6.674,-11);             // Establish gravitational constant
     this.PI2 = Math.PI * 2;         // Establish this.PI2 constant
     
     this.step = 0;
@@ -26,7 +26,7 @@ function Simulator() {
  * @param {Number}  e   - The exponent of the scientific notation i.e. b * 10 ^ e
  */
 
-function bigNum(b,e) {
+Simulator.prototype.bigNum = function(b,e) {
     return b * Math.pow(10,e);
 }
 

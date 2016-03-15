@@ -78,4 +78,15 @@ describe('Vector', function () {
       expect(_.isEqual(original, point)).to.be.true;
     });
   });
+  
+  describe('toString', function() {
+        it('should return a string', function() {
+            var vector = new Vector();
+            
+            expect(vector.toString()).to.be.a('string');
+         
+        });
+    });
+    
+    
 });
