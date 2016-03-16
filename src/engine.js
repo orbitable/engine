@@ -89,7 +89,7 @@ Simulator.prototype.addBody = function(body) {
     newBody.id = this.idCounter;
     this.idCounter += 1;
     this.bodies.push(newBody); 
-}
+};
 
 /**
  * Deletes body with given id
@@ -100,7 +100,99 @@ Simulator.prototype.deleteBody = function(id) {
     this.bodies = this.bodies.filter(function(body) { 
         return (body.id != id); 
     });
-}
+};
+
+/**
+ * Returns true if bodies are colliding, false otherwise
+ * @param {Body}  bodyA - first Body
+ * @param {Body}  bodyB - other Body
+ * @param {Number}  distance - distance between bodies
+ */
+
+Simulator.prototype.checkCollision = function(bodyA,bodyB,distance) {
+    return (distance < bodyA.radius + bodyB.radius);
+    //return (distance < Math.max(bodyA.radius, bodyB.radius)); ALTERNATIVE OPTION
+};
+
+/**
+ * Applies result of collision between two bodies
+ * @param {Body}  bodyA - first Body
+ * @param {Body}  bodyB - other Body
+ */
+
+Simulator.prototype.applyCollision = function(bodyA,bodyB) {
+    // Body A is larger, absorb mass from body B and delete it.
+    if (bodyA.mass > bodyB.mass) {
+        bodyA.addMass(bodyB.mass);
+        bodyB.destroy();
+    }
+    // Body B is larger, absorb mass from body A and delete it.
+    else {
+        bodyB.addMass(bodyA.mass);
+        bodyA.destroy();
+    }
+};
+
+/**
+ * Returns angle in radians from bodyA to bodyB
+ * @param {Body}  bodyA - first Body
+ * @param {Body}  bodyB - other Body
+ */
+
+Simulator.prototype.getAngle = function(bodyA,bodyB) {
+    var theta = Math.atan((bodyB.position.y - bodyA.position.y) / (bodyB.position.x - bodyA.position.x));
+    if (bodyB.position.x < bodyA.position.x) {
+        theta += Math.PI;
+    }
+    if (theta >= this.PI2) {
+        theta -= this.PI2;
+    }
+    if (theta < 0) {
+        theta += this.PI2;
+    }
+    return theta;
+};
+
+/**
+ * Returns force magnitude given masses and distance
+ * @param {Body}  massA - first Body mass
+ * @param {Body}  massB - other Body mass
+ * @param {Number} distance - distance between bodies
+ */
+
+Simulator.prototype.getGravity = function(massA,massB,distance) {
+    // Prevent division by 0
+    if (distance === 0) {
+        // A distance of 0 would imply no direction, so no force
+        return 0;
+    }
+    // Gravitational function
+    return this.G * (massA * massB) / Math.pow(distance, 2);
+};
+
+/**
+ * Returns a vector with given angle and magnitude
+ * @param {Number}  angle - angle
+ * @param {Number}  magnitude - magnitude
+ */
+
+Simulator.prototype.getVector = function(angle,magnitude) {
+   return new Vector(Math.cos(angle) * magnitude, Math.sin(angle) * magnitude);
+};
+
+/**
+ * Applies accumulated forces for each body that still 'exists'
+ * @param {Number}  dT - Number of seconds passed
+ */
+
+Simulator.prototype.applyForces = function(dT) {
+    this.bodies.forEach(function(body) {
+        if (body.exists) {
+            body.applyForce(dT);
+            this.simulationTime += dT;
+        }
+    });
+};
 
 /**
  * Calculates a step in the simulation
@@ -119,54 +211,32 @@ Simulator.prototype.update = function(dT) {
             // For each body below bodyA
             for (var b = a+1; b < this.bodies.length; b++) {
 
-                var bodyB = this.bodies[b];
-
                 // If exists
                  if (this.bodies[b].exists) {
-
-                    var r = bodyA.position.distanceTo(bodyB.position);
+                    var bodyB = this.bodies[b];
+                    
+                    // Get distance between bodies
+                    var distance = bodyA.position.distanceTo(bodyB.position);
 
                     // If collision
-                    if (r < Math.max(bodyA.radius, bodyB.radius)) {
-
-                        //bodyDeleted = true;
-
-                        // Body A is larger, absorb mass from body B and delete it.
-                        if (bodyA.mass > bodyB.mass) {
-                            this.bodies[a].addMass(bodyB.mass);
-                            this.bodies[b].destroy();
-                        }
-                         // Body B is larger, absorb mass from body A and delete it.
-                        else {
-                            this.bodies[b].addMass(bodyA.mass);
-                            this.bodies[a].destroy();
-                        }
+                    if (this.checkCollision(bodyA,bodyB,distance)) {
+                        // Apply collision
+                        this.applyCollision(bodyA,bodyB);
                     }
 
                     // If no collision
                     else {
 
                     	// Find the direction t
-                        var theta = Math.atan((bodyB.position.y - bodyA.position.y) / (bodyB.position.x - bodyA.position.x));
-                        if (bodyB.position.x < bodyA.position.x) {
-                            theta += Math.PI;
-                        }
-                        if (theta >= this.PI2) {
-                            theta -= this.PI2;
-                        }
-                        if (theta < 0) {
-                            theta += this.PI2;
-                        }
-                        // Gravitational function { (G * m1 * m2)/(r^2) }
-                        var tF = this.G * (bodyA.mass * bodyB.mass) / Math.pow(r, 2);
-
+                        var forceAngle = this.getAngle(bodyA,bodyB);
+                        // Get magnitude of force for gravitational function 
+                        var forceMagnitude = this.getGravity(bodyA.mass,bodyB.mass,distance);
                         // Apply magnitude to vector using direction theta
-                        var tFx = Math.cos(theta) * tF;
-                        var tFy = Math.sin(theta) * tF;
-
+                        var forceVector = this.getVector(forceAngle,forceMagnitude);
+                        
                         // Adds force to body
-                        bodyA.addForce(new Vector(tFx, tFy));
-                        bodyB.addForce(new Vector(-tFx, -tFy));
+                        bodyA.addForce(forceVector);
+                        bodyB.addForce(forceVector.scalarProduct(-1));
                     }
                 }
                 
@@ -174,15 +244,8 @@ Simulator.prototype.update = function(dT) {
         }
     }
 
-
-
     // Now that all the forces have been calculated, we can apply them to the bodies to update their velocities and positions.
-    this.bodies.forEach(function(body) {
-        if (body.exists) {
-            body.applyForce(dT);
-            this.simulationTime += dT;
-        }
-    });
+    this.applyForces(dT);
 
     this.step += 1;
     return;
@@ -190,23 +253,25 @@ Simulator.prototype.update = function(dT) {
 };
 
 /**
- * Prints the state of bodies in the scene
+ * Returns a string detailing the state of bodies in the scene
  *
  */
 
-Simulator.prototype.printState = function() {
-
-    console.log("-- CURRENT STATE -- (" + this.step + ")");
-    console.log("Simulation Time: " + this.simulationTime);
+Simulator.prototype.toString = function() {
+    
+    var line = "-- CURRENT STATE -- (" + this.step + ")\n" +
+        "Simulation Time: " + this.simulationTime;
+        
     for(var i = 0; i < this.bodies.length; i++) {
         if (this.bodies[i].exists) {
-            console.log("ID: " + i + "\t " + this.bodies[i].toString());
+            line = line + "ID: " + i + "\t " + this.bodies[i].toString();
         }
         else {
-            console.log("ID: " + i + "\t (destroyed)");
+            line = line + "ID: " + i + "\t (destroyed)";
         }
     }
-    console.log("");
+    
+    return line + "\n";
 
 };
 
