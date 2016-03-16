@@ -77,9 +77,9 @@ Body.prototype = {
      * @param {int} mass - The new mass
      */
     setMass: function(mass) {
-        this.mass = mass;
-        //this.radius = (0.62035 * Math.pow(this.density, (1/3)))/(Math.pow(this.mass, (1/3)));
+
         if (this.density != 0) {
+            this.mass = mass;
             this.radius = 0.62035049090 * Math.pow((this.mass/this.density),(1/3));
         }  
         else {
