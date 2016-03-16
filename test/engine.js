@@ -115,5 +115,16 @@ describe('Simulation', function() {
 
   });
   });
+  describe('bigNum', function() {
+    it('should return a number given scientific notation', function() {
+        var simulation = new Simulation();
+        
+        var b = 1.2345
+        var e = 3
+        
+        expect(simulation.bigNum(b,e)).to.equal(1234.5);
+        
+    })
+});
   
 });

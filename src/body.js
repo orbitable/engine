@@ -70,7 +70,7 @@ Body.prototype = {
      */
     setRadius: function(radius) {
         this.radius = radius;
-        this.density = this.mass / (4.18879020479 * Math.pow(this.radius, 3));
+        this.density = this.mass / ((4/3 * Math.PI) * Math.pow(this.radius, 3));
     },
     /**
      * Updates the body's mass. Updates the radius accordingly.
@@ -94,22 +94,27 @@ Body.prototype = {
     setMassRadius: function(mass,radius) {
         this.mass = mass;
         this.radius = radius;
-        this.density = this.mass / (4.18879020479 * Math.pow(this.radius, 3));
+        this.density = this.mass / ((4/3 * Math.PI) * Math.pow(this.radius, 3));
     },
     /**
      * Returns body info in string form
      *
      */
     toString: function() {
-        return "P: " + this.position.toString() + " V: " + this.velocity.toString() + " M: " + this.mass;
+        return " ID: " + this.id +
+        " E: " + this.exists + 
+        " P: " + this.position.toString() + 
+        " V: " + this.velocity.toString() + 
+        " M: " + this.mass + 
+        " R: " + this.radius +
+        " D: " + this.density +
+        " L: " + this.luminosity;
     },
     /**
      * Sets exists flag to false and sets physical attributes to 0
      */
     destroy: function() {
         this.radius = 0;
-        //this.mass = 0;
-        //this.density = 0;
         this.exists = false;
     }
 };
