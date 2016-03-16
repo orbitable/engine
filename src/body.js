@@ -38,7 +38,7 @@ Body.prototype = {
      * @param {Vector} force - The force vector to apply
      */
     addForce: function(force) {
-        this.force.add(force);
+        this.force = this.force.add(force);
     },
 
     /**

@@ -17,12 +17,12 @@ Vector.prototype = {
      * @param {Vector} vector - The second operand in a sum of two vectors.
      */
     add: function(vector) {
-        // var x = this.x + vector.x;
-        // var y = this.y + vector.y;
+        var x = this.x + vector.x;
+        var y = this.y + vector.y;
 
-        // return new Vector(x,y);
-        this.x += vector.x;
-        this.y += vector.y;
+        return new Vector(x,y);
+        // this.x += vector.x;
+        // this.y += vector.y;
     },
 
     /**
