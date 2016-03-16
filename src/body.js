@@ -78,13 +78,14 @@ Body.prototype = {
      */
     setMass: function(mass) {
 
-        if (this.density != 0) {
-            this.mass = mass;
-            this.radius = 0.62035049090 * Math.pow((this.mass/this.density),(1/3));
-        }  
-        else {
+        if (this.density === 0) {
             this.destroy();
         }
+        else {
+            this.mass = mass;
+            this.radius = 0.62035049090 * Math.pow((this.mass/this.density),(1/3));
+        }
+
     },
     /**
      * Updates the body's mass and radius. Updates the density accordingly.

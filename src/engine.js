@@ -144,9 +144,9 @@ Simulator.prototype.getAngle = function(bodyA,bodyB) {
     if (bodyB.position.x < bodyA.position.x) {
         theta += Math.PI;
     }
-    if (theta >= this.PI2) {
-        theta -= this.PI2;
-    }
+    // if (theta >= this.PI2) {
+    //     theta -= this.PI2;
+    // }
     if (theta < 0) {
         theta += this.PI2;
     }
