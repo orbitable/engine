@@ -89,7 +89,7 @@ Simulator.prototype.addBody = function(body) {
     newBody.id = this.idCounter;
     this.idCounter += 1;
     this.bodies.push(newBody); 
-}
+};
 
 /**
  * Deletes body with given id
@@ -100,7 +100,7 @@ Simulator.prototype.deleteBody = function(id) {
     this.bodies = this.bodies.filter(function(body) { 
         return (body.id != id); 
     });
-}
+};
 
 /**
  * Returns true if bodies are colliding, false otherwise
@@ -112,7 +112,7 @@ Simulator.prototype.deleteBody = function(id) {
 Simulator.prototype.checkCollision = function(bodyA,bodyB,distance) {
     return (distance < bodyA.radius + bodyB.radius);
     //return (distance < Math.max(bodyA.radius, bodyB.radius)); ALTERNATIVE OPTION
-}
+};
 
 /**
  * Applies result of collision between two bodies
@@ -131,7 +131,7 @@ Simulator.prototype.applyCollision = function(bodyA,bodyB) {
         bodyB.addMass(bodyA.mass);
         bodyA.destroy();
     }
-}
+};
 
 /**
  * Returns angle in radians from bodyA to bodyB
@@ -151,7 +151,7 @@ Simulator.prototype.getAngle = function(bodyA,bodyB) {
         theta += this.PI2;
     }
     return theta;
-}
+};
 
 /**
  * Returns force magnitude given masses and distance
@@ -161,8 +161,14 @@ Simulator.prototype.getAngle = function(bodyA,bodyB) {
  */
 
 Simulator.prototype.getGravity = function(massA,massB,distance) {
+    // Prevent division by 0
+    if (distance === 0) {
+        // A distance of 0 would imply no direction, so no force
+        return 0;
+    }
+    // Gravitational function
     return this.G * (massA * massB) / Math.pow(distance, 2);
-}
+};
 
 /**
  * Returns a vector with given angle and magnitude
@@ -172,7 +178,21 @@ Simulator.prototype.getGravity = function(massA,massB,distance) {
 
 Simulator.prototype.getVector = function(angle,magnitude) {
    return new Vector(Math.cos(angle) * magnitude, Math.sin(angle) * magnitude);
-}
+};
+
+/**
+ * Applies accumulated forces for each body that still 'exists'
+ * @param {Number}  dT - Number of seconds passed
+ */
+
+Simulator.prototype.applyForces = function(dT) {
+    this.bodies.forEach(function(body) {
+        if (body.exists) {
+            body.applyForce(dT);
+            this.simulationTime += dT;
+        }
+    });
+};
 
 /**
  * Calculates a step in the simulation
@@ -194,12 +214,13 @@ Simulator.prototype.update = function(dT) {
                 // If exists
                  if (this.bodies[b].exists) {
                     var bodyB = this.bodies[b];
-
-                    var distance = bodyA.position.distanceTo(bodyB);
+                    
+                    // Get distance between bodies
+                    var distance = bodyA.position.distanceTo(bodyB.position);
 
                     // If collision
                     if (this.checkCollision(bodyA,bodyB,distance)) {
-
+                        // Apply collision
                         this.applyCollision(bodyA,bodyB);
                     }
 
@@ -212,7 +233,7 @@ Simulator.prototype.update = function(dT) {
                         var forceMagnitude = this.getGravity(bodyA.mass,bodyB.mass,distance);
                         // Apply magnitude to vector using direction theta
                         var forceVector = this.getVector(forceAngle,forceMagnitude);
-
+                        
                         // Adds force to body
                         bodyA.addForce(forceVector);
                         bodyB.addForce(forceVector.scalarProduct(-1));
@@ -223,15 +244,8 @@ Simulator.prototype.update = function(dT) {
         }
     }
 
-
-
     // Now that all the forces have been calculated, we can apply them to the bodies to update their velocities and positions.
-    this.bodies.forEach(function(body) {
-        if (body.exists) {
-            body.applyForce(dT);
-            this.simulationTime += dT;
-        }
-    });
+    this.applyForces(dT);
 
     this.step += 1;
     return;
@@ -239,23 +253,25 @@ Simulator.prototype.update = function(dT) {
 };
 
 /**
- * Prints the state of bodies in the scene
+ * Returns a string detailing the state of bodies in the scene
  *
  */
 
-Simulator.prototype.printState = function() {
-
-    console.log("-- CURRENT STATE -- (" + this.step + ")");
-    console.log("Simulation Time: " + this.simulationTime);
+Simulator.prototype.toString = function() {
+    
+    var line = "-- CURRENT STATE -- (" + this.step + ")\n" +
+        "Simulation Time: " + this.simulationTime;
+        
     for(var i = 0; i < this.bodies.length; i++) {
         if (this.bodies[i].exists) {
-            console.log("ID: " + i + "\t " + this.bodies[i].toString());
+            line = line + "ID: " + i + "\t " + this.bodies[i].toString();
         }
         else {
-            console.log("ID: " + i + "\t (destroyed)");
+            line = line + "ID: " + i + "\t (destroyed)";
         }
     }
-    console.log("");
+    
+    return line + "\n";
 
 };
 
