@@ -119,6 +119,7 @@ Body.prototype = {
      */
     toString: function() {
         return " ID: " + this.id +
+        " (" + this.name + ")" +
         " E: " + this.exists + 
         " P: " + this.position.toString() + 
         " V: " + this.velocity.toString() + 
