@@ -14,32 +14,70 @@ describe('Simulation', function() {
     
     
     describe('reset', function() {
-  it('should reset with given bodies', function() {
-    var simulation = new Simulation();
-    expect(simulation.bodies).to.be.empty;
+        it('should reset with given bodies', function() {
+            var simulation = new Simulation();
+            expect(simulation.bodies).to.be.empty;
 
-    var body = {
-      mass: 1,
-      position: {x: 1, y: 2},
-      radius: 1,
-      velocity: {x: 3, y: 4},
-      luminosity: 1234
-    };
+            var body = {
+                mass: 1,
+                position: {x: 1, y: 2},
+                radius: 1,
+                velocity: {x: 3, y: 4},
+                luminosity: 1234
+            };
 
-    simulation.reset([body]);
-    expect(simulation.bodies).not.to.be.empty;
+            simulation.reset([body]);
+            expect(simulation.bodies).not.to.be.empty;
 
-    var parsedBody = simulation.bodies[0];
-    expect(parsedBody instanceof Body).to.be.true;
-    expect(parsedBody.mass).to.equal(body.mass);
-    expect(parsedBody.radius).to.equal(body.radius);
-    expect(parsedBody.position.x).to.equal(1);
-    expect(parsedBody.position.y).to.equal(2);
-    expect(parsedBody.velocity.x).to.equal(3);
-    expect(parsedBody.velocity.y).to.equal(4);
-    expect(parsedBody.density).to.be.a('number');
-    expect(parsedBody.luminosity).to.equal(1234);
-  });
+            var parsedBody = simulation.bodies[0];
+            expect(parsedBody instanceof Body).to.be.true;
+            expect(parsedBody.mass).to.equal(body.mass);
+            expect(parsedBody.radius).to.equal(body.radius);
+            expect(parsedBody.position.x).to.equal(1);
+            expect(parsedBody.position.y).to.equal(2);
+            expect(parsedBody.velocity.x).to.equal(3);
+            expect(parsedBody.velocity.y).to.equal(4);
+            expect(parsedBody.density).to.be.a('number');
+            expect(parsedBody.luminosity).to.equal(1234);
+        });
+        
+        it('should reset with actual Body instances given', function() {
+            var simulation = new Simulation();
+            expect(simulation.bodies).to.be.empty;
+
+            var body = new Body(
+                1,
+                new Vector(1,2),
+                new Vector(3,4),
+                1,
+                1234
+            );
+
+            simulation.reset([body]);
+            expect(simulation.bodies).not.to.be.empty;
+
+            var parsedBody = simulation.bodies[0];
+            expect(parsedBody instanceof Body).to.be.true;
+            expect(parsedBody.mass).to.equal(body.mass);
+            expect(parsedBody.radius).to.equal(body.radius);
+            expect(parsedBody.position.x).to.equal(1);
+            expect(parsedBody.position.y).to.equal(2);
+            expect(parsedBody.velocity.x).to.equal(3);
+            expect(parsedBody.velocity.y).to.equal(4);
+            expect(parsedBody.density).to.be.a('number');
+            expect(parsedBody.luminosity).to.equal(1234);
+        });
+        
+        it('should assign empty body array if passed nothing', function() {
+            var simulation = new Simulation();
+            expect(simulation.bodies).to.be.empty;
+            
+            simulation.addBody(new Body());
+
+            simulation.reset();
+            expect(simulation.bodies).to.be.empty;
+
+        });
     });
   
   describe('addBody', function() {
@@ -420,6 +458,7 @@ describe('Simulation', function() {
     });
     
   });
+  
   describe('bigNum', function() {
     it('should return a number given scientific notation', function() {
         var simulation = new Simulation();
