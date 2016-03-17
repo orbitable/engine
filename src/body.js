@@ -37,6 +37,26 @@ function Body(mass, position, velocity, radius, luminosity) {
 }
 
 Body.prototype = {
+    /**
+     * Modifies attributes of the body
+     *
+     * @param {Object} body - A body-like object
+     */
+    
+    update: function(body) {
+        if (body.position) {
+            this.position.x = body.position.x || this.position.x;
+            this.position.y = body.position.y || this.position.y;
+        }
+        if (body.velocity) {
+            this.velocity.x = body.velocity.x || this.velocity.x;
+            this.velocity.y = body.velocity.y || this.velocity.y;
+        }
+        
+        this.luminosity = body.luminosity || this.luminosity;
+        
+        this.setMassRadius(body.mass || this.mass, body.radius || this.radius);
+    },
 
     /**
      * Adds mass to the body.
