@@ -2,6 +2,7 @@
   "name": "engine",
   "version": "0.1.2",
   "description": "An N-Body simulation library",
+  "license": "Apache-2.0",
   "main": "src/engine.js",
   "scripts": {
     "test": "istanbul cover node_modules/mocha/bin/_mocha && codecov"
