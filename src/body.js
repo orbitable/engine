@@ -13,6 +13,7 @@
  */
 
 var Vector = require('./vector.js');
+var PlanetNamer = require('./planetNamer.js');
 
 /**
  * Constucts a new rigid body to include in a simluation system.
@@ -26,7 +27,8 @@ var Vector = require('./vector.js');
  * @param {int}  luminosity - The initial unit luminosity of the body
  */
 
-function Body(mass, position, velocity, radius, luminosity) {
+function Body(mass, position, velocity, radius, luminosity, name) {
+    this.name = name || new PlanetNamer().getName();
     this.force = new Vector(0,0);
     this.setMassRadius(mass || 5.972 * Math.pow(10,24), radius || 6.3674447 * Math.pow(10,6))
     this.position = position || new Vector(0,0);
