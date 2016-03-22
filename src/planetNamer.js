@@ -12,6 +12,8 @@
  * specific language governing permissions and limitations under the License.
  */
 
+var _      = require('lodash');
+
 function PlanetNamer() {
     this.prefixes = [
         "Xar",
@@ -51,11 +53,10 @@ function PlanetNamer() {
 }
 
 PlanetNamer.prototype.getName = function() {
-    return this.prefixes[this.random(0,this.prefixes.length)] + this.suffixes[this.random(0,this.suffixes.length)] + "-" + this.codes[this.random(0,this.codes.length)] + this.random(1000,9999);
-};
-
-PlanetNamer.prototype.random = function (min,max) {
-    return Math.floor((Math.random() * (max-min)) + min);
+    return _.sample(this.prefixes) + 
+        _.sample(this.suffixes) + "-" + 
+        _.sample(this.codes) + 
+        Math.floor(9000.0 * Math.random() + 1000.0); // Random arbitrary 4 digit number
 };
 
 module.exports = PlanetNamer;

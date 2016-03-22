@@ -31,12 +31,4 @@ describe('PlanetNamer', function () {
       expect(p.getName()).to.be.a('string');
     });
   });
-  describe('random', function() {
-    it('should return a number', function() {
-      var p = new PlanetNamer();
-      expect(p.random()).to.be.a('number');
-    });
-  });
-    
-    
 });
