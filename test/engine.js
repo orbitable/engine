@@ -557,6 +557,17 @@ describe('Simulation', function() {
     });
     
     describe('assignIDs', function() {
+        
+        it('should end with all bodies having number IDs', function() {
+            var simulation = new Simulation();
+            simulation.bodies = [new Body(),new Body(),new Body(),new Body(),new Body(),new Body()];
+            simulation.assignIDs();
+            
+            simulation.bodies.forEach( function(bodyA) {
+                expect(bodyA.id).not.to.equal(NaN);
+            });
+        });
+        
         it('should end with all bodies having unique IDs', function() {
             var simulation = new Simulation();
             simulation.bodies = [new Body(),new Body(),new Body(),new Body(),new Body(),new Body()];
