@@ -19,6 +19,12 @@ var Vector = require('../src/vector.js');
 
 describe('Body', function() {
     
+    it('should assign a random name',function() {
+        var body = new Body(1,new Vector(2,3),new Vector(4,5),6,7);
+        expect(body.name).to.be.a('string');
+        
+    });
+    
     it('should allow physical attributes to be assigned',function() {
         var body = new Body(1,new Vector(2,3),new Vector(4,5),6,7);
         expect(body.mass).to.equal(1);
