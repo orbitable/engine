@@ -71,17 +71,17 @@ Simulator.prototype.reset = function(bodies) {
  */
 
 Simulator.prototype.assignIDs = function() {
-    this.idCounter = 0;
+    var tempID = 0;
     this.bodies.forEach(function(body) { 
-        body.id = this.idCounter;
-        this.idCounter += 1;
+        body.id = tempID;
+        tempID += 1;
     });
+    this.idCounter = tempID;
 };
 
 /**
- * Adds a body given an x and y coordinate. Other attributes are generated.
- * @param {Number}  x - x position coordinate
- * @param {Number}  y - y position coordinate
+ * Adds a body given an Object with any attributes, the rest will be generated
+ * @param {Object}  body - Body or Body-like object with any combination of attributes
  */
 
 Simulator.prototype.addBody = function(body) {
@@ -101,6 +101,7 @@ Simulator.prototype.addBody = function(body) {
         body.luminosity
     ); 
     newBody.id = this.idCounter;
+    // console.log(newBody.id);
     this.idCounter += 1;
     this.bodies.push(newBody); 
 };
