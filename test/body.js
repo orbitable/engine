@@ -49,6 +49,127 @@ describe('Body', function() {
         
     });
     
+    describe('update', function() {
+        var b = new Body();
+        var modifier = {};
+        
+        beforeEach( function() {
+            b = new Body(1,new Vector(1,1),new Vector(1,1),1,1);
+            modifier = {
+                mass: 2,
+                position: {x: 2, y: 2},
+                velocity: {x: 2, y: 2},
+                radius: 2,
+                luminosity: 2
+            };
+        });
+        
+        
+        it('should be able to update all constructor attributes', function() {
+            b.update(modifier);
+            
+            expect(b.mass).to.equal(2);
+            expect(b.position.x).to.equal(2);
+            expect(b.position.y).to.equal(2);
+            expect(b.velocity.x).to.equal(2);
+            expect(b.velocity.y).to.equal(2);
+            expect(b.radius).to.equal(2);
+            expect(b.luminosity).to.equal(2);
+        });
+        
+        it('should be able to update only mass', function() {
+            modifier = {mass: 2};
+            b.update(modifier);
+            
+            expect(b.mass).to.equal(2);
+            expect(b.position.x).to.equal(1);
+            expect(b.position.y).to.equal(1);
+            expect(b.velocity.x).to.equal(1);
+            expect(b.velocity.y).to.equal(1);
+            expect(b.radius).to.equal(1);
+            expect(b.luminosity).to.equal(1);
+        });
+        
+        it('should be able to update only x position attribute', function() {
+            modifier = {position: {x: 2}};
+            b.update(modifier);
+            
+            expect(b.mass).to.equal(1);
+            expect(b.position.x).to.equal(2);
+            expect(b.position.y).to.equal(1);
+            expect(b.velocity.x).to.equal(1);
+            expect(b.velocity.y).to.equal(1);
+            expect(b.radius).to.equal(1);
+            expect(b.luminosity).to.equal(1);
+        });
+        
+        it('should be able to update only y position attribute', function() {
+            modifier = {position: {y: 2}};
+            b.update(modifier);
+            
+            expect(b.mass).to.equal(1);
+            expect(b.position.x).to.equal(1);
+            expect(b.position.y).to.equal(2);
+            expect(b.velocity.x).to.equal(1);
+            expect(b.velocity.y).to.equal(1);
+            expect(b.radius).to.equal(1);
+            expect(b.luminosity).to.equal(1);
+        });
+        
+        it('should be able to update only x velocity attribute', function() {
+            modifier = {velocity: {x: 2}};
+            b.update(modifier);
+            
+            expect(b.mass).to.equal(1);
+            expect(b.position.x).to.equal(1);
+            expect(b.position.y).to.equal(1);
+            expect(b.velocity.x).to.equal(2);
+            expect(b.velocity.y).to.equal(1);
+            expect(b.radius).to.equal(1);
+            expect(b.luminosity).to.equal(1);
+        });
+        
+        it('should be able to update only y velocity attribute', function() {
+            modifier = {velocity: {y: 2}};
+            b.update(modifier);
+            
+            expect(b.mass).to.equal(1);
+            expect(b.position.x).to.equal(1);
+            expect(b.position.y).to.equal(1);
+            expect(b.velocity.x).to.equal(1);
+            expect(b.velocity.y).to.equal(2);
+            expect(b.radius).to.equal(1);
+            expect(b.luminosity).to.equal(1);
+        });
+        
+        it('should be able to update only luminosity attribute', function() {
+            modifier = {luminosity: 2};
+            b.update(modifier);
+            
+            expect(b.mass).to.equal(1);
+            expect(b.position.x).to.equal(1);
+            expect(b.position.y).to.equal(1);
+            expect(b.velocity.x).to.equal(1);
+            expect(b.velocity.y).to.equal(1);
+            expect(b.radius).to.equal(1);
+            expect(b.luminosity).to.equal(2);
+        });
+        
+        it('should be able to update only radius attribute', function() {
+            modifier = {radius: 2};
+            b.update(modifier);
+            
+            expect(b.mass).to.equal(1);
+            expect(b.position.x).to.equal(1);
+            expect(b.position.y).to.equal(1);
+            expect(b.velocity.x).to.equal(1);
+            expect(b.velocity.y).to.equal(1);
+            expect(b.radius).to.equal(2);
+            expect(b.luminosity).to.equal(1);
+        });
+        
+    });
+    
     describe('addForce', function() {
         it('should accumulate a force', function() {
             var body = new Body();
