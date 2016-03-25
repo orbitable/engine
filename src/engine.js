@@ -21,16 +21,16 @@ var Vector = require('./vector.js');
  * @constructor
  */
 function Simulator() {
-    
+
     this.idCounter = 0
     this.bodies = [];
-    
+
     this.G = this.bigNum(6.674,-11);             // Establish gravitational constant
     this.PI2 = Math.PI * 2;         // Establish this.PI2 constant
-    
+
     this.step = 0;
     this.simulationTime = 0.0;
-   
+
 }
 
 /**
@@ -61,9 +61,9 @@ Simulator.prototype.reset = function(bodies) {
 
     return new Body(body.mass, position, velocity, body.radius, body.luminosity);
   });
-  
+
   this.assignIDs()
-  
+
 };
 
 /**
@@ -72,7 +72,7 @@ Simulator.prototype.reset = function(bodies) {
 
 Simulator.prototype.assignIDs = function() {
     var tempID = 0;
-    this.bodies.forEach(function(body) { 
+    this.bodies.forEach(function(body) {
         body.id = tempID;
         tempID += 1;
     });
@@ -85,25 +85,25 @@ Simulator.prototype.assignIDs = function() {
  */
 
 Simulator.prototype.addBody = function(body) {
-    
+
     if (body.position) {
         var position = new Vector(body.position.x, body.position.y);
     }
     if (body.velocity) {
         var velocity = new Vector(body.velocity.x, body.velocity.y);
     }
-    
+
     var newBody = new Body(
         body.mass,
         position,
         velocity,
         body.radius,
         body.luminosity
-    ); 
+    );
     newBody.id = this.idCounter;
     // console.log(newBody.id);
     this.idCounter += 1;
-    this.bodies.push(newBody); 
+    this.bodies.push(newBody);
 };
 
 /**
@@ -112,8 +112,8 @@ Simulator.prototype.addBody = function(body) {
  */
 
 Simulator.prototype.deleteBody = function(id) {
-    this.bodies = this.bodies.filter(function(body) { 
-        return (body.id != id); 
+    this.bodies = this.bodies.filter(function(body) {
+        return (body.id != id);
     });
 };
 
@@ -124,11 +124,21 @@ Simulator.prototype.deleteBody = function(id) {
  */
 
 Simulator.prototype.updateBody = function(id,data) {
-    this.bodies = this.bodies.filter(function(body) { 
-        return (body.id === id); 
-    }).forEach(function(body) {
-        body.update(data);
+    this.bodies = this.bodies.map(function(body) {
+        if(body.id == id) {
+            body.update(data);
+        }
+
+        return body;
     });
+    // this.bodies = this.bodies.filter(function(body) {
+    //     return (body.id === id);
+    // }).forEach(function(body) {
+    //     body.update(data);
+    // });
+    // this.bodies.forEach(function(body){
+    //     if(body.id === id)
+    // })
 };
 
 /**
@@ -243,7 +253,7 @@ Simulator.prototype.update = function(dT) {
                 // If exists
                  if (this.bodies[b].exists) {
                     var bodyB = this.bodies[b];
-                    
+
                     // Get distance between bodies
                     var distance = bodyA.position.distanceTo(bodyB.position);
 
@@ -258,17 +268,17 @@ Simulator.prototype.update = function(dT) {
 
                     	// Find the direction t
                         var forceAngle = this.getAngle(bodyA,bodyB);
-                        // Get magnitude of force for gravitational function 
+                        // Get magnitude of force for gravitational function
                         var forceMagnitude = this.getGravity(bodyA.mass,bodyB.mass,distance);
                         // Apply magnitude to vector using direction theta
                         var forceVector = this.getVector(forceAngle,forceMagnitude);
-                        
+
                         // Adds force to body
                         bodyA.addForce(forceVector);
                         bodyB.addForce(forceVector.scalarProduct(-1));
                     }
                 }
-                
+
             }
         }
     }
@@ -287,10 +297,10 @@ Simulator.prototype.update = function(dT) {
  */
 
 Simulator.prototype.toString = function() {
-    
+
     var line = "-- CURRENT STATE -- (" + this.step + ")\n" +
         "Simulation Time: " + this.simulationTime;
-        
+
     for(var i = 0; i < this.bodies.length; i++) {
         if (this.bodies[i].exists) {
             line = line + "ID: " + i + "\t " + this.bodies[i].toString();
@@ -299,7 +309,7 @@ Simulator.prototype.toString = function() {
             line = line + "ID: " + i + "\t (destroyed)";
         }
     }
-    
+
     return line + "\n";
 
 };
