@@ -176,6 +176,44 @@ describe('Simulation', function() {
     });
   });
   
+    describe('updateBody', function() {
+    it('should update bodies with given ID and data', function() {
+        var simulation = new Simulation();
+        expect(simulation.bodies).to.be.empty;
+
+        var body = {
+            mass: 1,
+            position: {x: 1, y: 2},
+            radius: 1,
+            velocity: {x: 3, y: 4},
+            luminosity: 1234
+        };
+        var body2 = {
+            mass: 2,
+            position: {x: 2, y: 3},
+            radius: 2,
+            velocity: {x: 4, y: 5},
+            luminosity: 2345
+        };
+
+        simulation.addBody(body);
+        simulation.addBody(body2);
+        expect(simulation.bodies).not.to.be.empty;
+
+        var parsedBody = simulation.bodies[0];
+        var parsedBody2 = simulation.bodies[1];
+        var parsedID = parsedBody2.id;
+        
+        expect(parsedBody instanceof Body).to.be.true;
+        
+        simulation.updateBody(parsedID,{position: {x: 6}});
+        expect(parsedBody.position.x).to.equal(1);
+        expect(parsedBody2.position.x).to.equal(6);
+        expect(parsedBody2.position.y).to.equal(3);
+
+    });
+  });
+  
   describe('checkCollision', function() {
     it('should return true if bodies intersect, false otherwise', function() {
         var simulation = new Simulation();

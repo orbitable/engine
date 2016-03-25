@@ -118,6 +118,20 @@ Simulator.prototype.deleteBody = function(id) {
 };
 
 /**
+ * Updates body with given id with given data
+ * @param {Number}  id - Unique id of body to be updated
+ * @param {Object}  data - Data to update with
+ */
+
+Simulator.prototype.updateBody = function(id,data) {
+    this.bodies = this.bodies.filter(function(body) { 
+        return (body.id === id); 
+    }).forEach(function(body) {
+        body.update(data);
+    });
+};
+
+/**
  * Returns true if bodies are colliding, false otherwise
  * @param {Body}  bodyA - first Body
  * @param {Body}  bodyB - other Body
