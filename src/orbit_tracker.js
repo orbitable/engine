@@ -2,9 +2,12 @@ var Body = require('./body.js');
 var Vector = require('./vector.js');
 
 /**
- * A simulator that stores body attributes and can calculate steps of a simulation
+ * A tool that tracks orbit periods over several completions and reports an average orbit time.
  *
  * @constructor
+ * @param {Body} targetBody - The body that is orbiting
+ * @param {Body} centerBody - The body that the targetBody is orbitting around
+ * @param {Vector} startTime  - The timestamp for the start of the first orbit
  */
 function OrbitTracker(targetBody,centerBody,startTime) {
     
@@ -12,12 +15,10 @@ function OrbitTracker(targetBody,centerBody,startTime) {
     this.centerBody = centerBody;
     
     this.startAngle = this.getAngle(this.targetBody.position,this.centerBody.position) || 0;
-    //this.oppositeAngle = this.addAngle(this.startAngle,Math.PI) || 0;
     
     this.lastAngle = this.startAngle;
     this.currentAngle = this.startAngle;
     
-    //this.angularVelocity = 0.0;
     this.startTime = startTime;
     
     this.semiComplete = false;
@@ -31,12 +32,18 @@ function OrbitTracker(targetBody,centerBody,startTime) {
     this.orbitCount = 0;
     this.orbitTime = 0;
     
-    console.log("ORBIT TRACKING INITIATED:\n" + this.toString());
+    //console.log("ORBIT TRACKING INITIATED:\n" + this.toString());
    
 }
 
+
 OrbitTracker.PI2 = Math.PI * 2.0;
 
+/**
+ * Completes an orbit, calculating a new average orbit time and resetting values to prepare for next orbit
+ *
+ * @param {Number} time - The timestamp of orbit completion
+ */
 OrbitTracker.prototype.completeOrbit = function(time) {
     
     this.orbitCount += 1;
@@ -50,9 +57,15 @@ OrbitTracker.prototype.completeOrbit = function(time) {
     this.startTime = time;
     this.startAngle = this.getAngle(this.targetBody.position,this.centerBody.position);
     
-    console.log(this.toString());
+    //console.log(this.toString());
 };
 
+/**
+ * Performs a check of the orbit state
+ *
+ * @param {Number} updateTime - The timestamp of the current state of the simulator
+ * @param {Number} deltaTime  - The timestep of the current simulation frame
+ */
 OrbitTracker.prototype.update = function(updateTime,deltaTime) {
     
         this.currentAngle = this.getAngle(this.targetBody.position,this.centerBody.position);
@@ -72,21 +85,13 @@ OrbitTracker.prototype.update = function(updateTime,deltaTime) {
         this.lastAngle = this.currentAngle;
 };
 
-OrbitTracker.prototype.addAngle = function(angle,add) {
-    console.log(angle + " + " + add);
-    var theta = angle + add;
-    if (theta >= OrbitTracker.PI2) {
-        theta -= OrbitTracker.PI2;
-        console.log("Oversized theta. Fixing to: " + theta);
-    }
-    if (theta < 0) {
-        theta += OrbitTracker.PI2;
-        console.log("Undersized theta. Fixing to: " + theta);
-    }
-    return theta;
-};
-
-OrbitTracker.prototype.getAngle = function(positionA,positionB) {
+/**
+ * Returns the angle from positionA to positionB
+ *
+ * @param {Vector} positionA  - The origin position
+ * @param {Vector} positionB  - The angle target position
+ */
+OrbitTracker.getAngle = function(positionA,positionB) {
     var theta = Math.atan((positionB.y - positionA.y) / (positionB.x - positionA.x));
     if (positionB.x < positionA.x) {
         theta += Math.PI;
@@ -100,7 +105,17 @@ OrbitTracker.prototype.getAngle = function(positionA,positionB) {
     return theta;
 };
 
+/**
+ * Returns the quadrant number (1,2,3,4) of the given vector
+ *
+ * @param {Vector} position - The origin position
+ */
 OrbitTracker.getQuad = function (position) {
+    /**
+     *  2 | 1
+     *  - - -
+     *  3 | 4
+     */
     if (position.x >= 0 ) {
         if (position.y >= 0) {
             return 1;
@@ -119,33 +134,13 @@ OrbitTracker.getQuad = function (position) {
     }
 };
 
-
 /**
- * Takes in NON-NEGATIVE start and end values
- * Returns p
+ * Returns true if 'target' is between 'start' and 'end'
+ *
+ * @param {Number} start - Bound of range
+ * @param {Number} end  - Bound of range
+ * @param {Number} target  - Target angle
  */
-// OrbitTracker.getAngularVelocity = function(start,end) {
-//     var C;
-//     var CC;
-//     if (start < end) {
-//         CC = end - start;
-//         C  = -(start + (OrbitTracker.PI2 - end));
-//     }
-//     else {
-//         C = end - start;
-//         CC  = end + (OrbitTracker.PI2 - start);
-//     }
-    
-//     if (Math.abs(C) < Math.abs(CC)) {
-//         return C;
-//     }
-//     else {
-//         return CC;
-//     }
-    
-    
-// };
-
 OrbitTracker.checkCross = function(start,end,target) {
     var C;
     var CC;
@@ -183,14 +178,13 @@ OrbitTracker.checkCross = function(start,end,target) {
             }
         }
     }
-    
     return false;
-    
-    
 };
 
-
-OrbitTracker.prototype.toString = function(bodyA,bodyB) {
+/**
+ * Returns string representation of OrbitTracker state
+ */
+OrbitTracker.prototype.toString = function() {
     return "Target: " + this.targetBody.toString() + "\n" + 
     "Center: " + this.centerBody.toString() + "\n" + 
     "Quads: " + this.startQuad + "/" + this.goalQuad + "\n" + 
