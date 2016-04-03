@@ -38,6 +38,29 @@ describe('OrbitTracker', function () {
         });
     });
     
+    describe('getStartQuads', function() {
+        it('should set appropriate start and goal quadrants', function() {
+            
+            var o = new OrbitTracker(new Body(1,new Vector(1,1)), new Body(1,new Vector(0,0)), 0);
+            expect(o.startQuad).to.equal(1);
+            expect(o.goalQuad ).to.equal(3);
+            
+            o = new OrbitTracker(new Body(1,new Vector(-1,1)), new Body(1,new Vector(0,0)), 0);
+            expect(o.startQuad).to.equal(2);
+            expect(o.goalQuad ).to.equal(4);
+            
+            o = new OrbitTracker(new Body(1,new Vector(-1,-1)), new Body(1,new Vector(0,0)), 0);
+            expect(o.startQuad).to.equal(3);
+            expect(o.goalQuad ).to.equal(1);
+            
+            o = new OrbitTracker(new Body(1,new Vector(1,-1)), new Body(1,new Vector(0,0)), 0);
+            expect(o.startQuad).to.equal(4);
+            expect(o.goalQuad ).to.equal(2);
+            
+        });
+    });
+    
+    
     describe('checkCross', function() {
         it('should return angular distance between two angles', function() {
             

@@ -14,27 +14,54 @@ function OrbitTracker(targetBody,centerBody,startTime) {
     this.targetBody = targetBody;
     this.centerBody = centerBody;
     
-    this.startAngle = this.getAngle(this.targetBody.position,this.centerBody.position) || 0;
+    this.orbitCount = 0;
+    this.orbitTime = 0;
     
+    this.running = false;
+    if ((this.targetBody instanceof Body) && (this.centerBody instanceof Body)) {
+        console.log(this.targetBody.position);
+        console.log(this.centerBody.position);
+        this.initialize(startTime);
+    }
+    
+    
+    
+    //console.log("ORBIT TRACKING INITIATED:\n" + this.toString());
+   
+}
+
+/**
+ * Sets initial settings for tracking
+ *
+ * @param {Number} startTime - Start time for this orbit
+ */
+OrbitTracker.prototype.initialize = function(startTime) {
+    this.running = true;
+    this.startAngle = OrbitTracker.getAngle(this.targetBody.position,this.centerBody.position) || 0;
     this.lastAngle = this.startAngle;
     this.currentAngle = this.startAngle;
     
     this.startTime = startTime;
     
     this.semiComplete = false;
-    this.relativePosition = this.targetBody.position.add(this.centerBody.position.scalarProduct(-1));
-    this.startQuad = OrbitTracker.getQuad(this.relativePosition);
+    
+    this.relativePosition = this.targetBody.position;
+    this.relativePosition.add(this.centerBody.position.scalarProduct(-1));
+    this.getStartQuads(this.relativePosition);
+};
+
+/**
+ * Sets initial startQuad and goalQuad values
+ *
+ * @param {Vector} position - The relative position of the body
+ */
+OrbitTracker.prototype.getStartQuads = function(quadPosition) {
+    this.startQuad = OrbitTracker.getQuad(quadPosition);
     this.goalQuad = this.startQuad + 2;
     if (this.goalQuad > 4) {
         this.goalQuad -= 4;
     }
-    
-    this.orbitCount = 0;
-    this.orbitTime = 0;
-    
-    //console.log("ORBIT TRACKING INITIATED:\n" + this.toString());
-   
-}
+};
 
 
 OrbitTracker.PI2 = Math.PI * 2.0;
@@ -52,10 +79,7 @@ OrbitTracker.prototype.completeOrbit = function(time) {
         this.orbitTime * ((this.orbitCount-1)/(this.orbitCount)) + 
         (time - this.startTime) * (1/(this.orbitCount));
     
-    this.semiComplete = false;
-    
-    this.startTime = time;
-    this.startAngle = this.getAngle(this.targetBody.position,this.centerBody.position);
+    this.initialize(time);
     
     //console.log(this.toString());
 };
@@ -68,22 +92,44 @@ OrbitTracker.prototype.completeOrbit = function(time) {
  */
 OrbitTracker.prototype.update = function(updateTime,deltaTime) {
     
-        this.currentAngle = this.getAngle(this.targetBody.position,this.centerBody.position);
+    if (this.running) {
+    
+        this.currentAngle = OrbitTracker.getAngle(this.targetBody.position,this.centerBody.position);
         
         if(this.semiComplete) {
-            if (OrbitTracker.checkCross(this.lastAngle,this.currentAngle,this.startAngle)) {
-                this.completeOrbit(updateTime);
-            }
+            this.checkFull(updateTime);
         } 
         else {
-            this.relativePosition = this.targetBody.position.add(this.centerBody.position.scalarProduct(-1));
-            if (OrbitTracker.getQuad(this.relativePosition) === this.goalQuad) {
-                this.semiComplete = true;
-            }
+            this.checkSemi();
         }
         
         this.lastAngle = this.currentAngle;
+    }
 };
+
+/**
+ * Checks to see if the entire orbit is completed
+ *
+ * @param {Number} updateTime - The timestamp of the current state of the simulator
+ */
+OrbitTracker.prototype.checkFull = function(updateTime) {
+    if (OrbitTracker.checkCross(this.lastAngle,this.currentAngle,this.startAngle)) {
+        this.completeOrbit(updateTime);
+    }
+};
+
+/**
+ * Checks to see if half the orbit has been completed
+ *
+ */
+OrbitTracker.prototype.checkSemi = function() {
+    this.relativePosition = this.targetBody.position;
+    this.relativePosition.add(this.centerBody.position.scalarProduct(-1));
+    if (OrbitTracker.getQuad(this.relativePosition) === this.goalQuad) {
+        this.semiComplete = true;
+    }
+};
+
 
 /**
  * Returns the angle from positionA to positionB
@@ -110,14 +156,14 @@ OrbitTracker.getAngle = function(positionA,positionB) {
  *
  * @param {Vector} position - The origin position
  */
-OrbitTracker.getQuad = function (position) {
+OrbitTracker.getQuad = function (quadPosition) {
     /**
      *  2 | 1
      *  - - -
      *  3 | 4
      */
-    if (position.x >= 0 ) {
-        if (position.y >= 0) {
+    if (quadPosition.x >= 0 ) {
+        if (quadPosition.y >= 0) {
             return 1;
         }
         else {
@@ -125,7 +171,7 @@ OrbitTracker.getQuad = function (position) {
         }
     }
     else {
-        if (position.y >= 0) {
+        if (quadPosition.y >= 0) {
             return 2;
         }
         else {
