@@ -14,6 +14,7 @@
 
 var Body = require('./body.js');
 var Vector = require('./vector.js');
+var OrbitTracker = require('./orbit_tracker.js');
 
 /**
  * A simulator that stores body attributes and can calculate steps of a simulation
@@ -24,6 +25,8 @@ function Simulator() {
 
     this.idCounter = 0
     this.bodies = [];
+
+    this.orbitTracker = null;
 
     this.G = this.bigNum(6.674,-11);             // Establish gravitational constant
     this.PI2 = Math.PI * 2;         // Establish this.PI2 constant
@@ -52,6 +55,7 @@ Simulator.prototype.bigNum = function(b,e) {
 Simulator.prototype.reset = function(bodies) {
 
   bodies = bodies || [];
+  this.orbitTracker = null;
 
   this.bodies = bodies.map(function(body) {
     if (body instanceof Body) return body;
@@ -63,6 +67,8 @@ Simulator.prototype.reset = function(bodies) {
   });
 
   this.assignIDs()
+  
+  this.orbitTracker = new OrbitTracker(this.bodies[3],this.bodies[0],0);
 
 };
 
@@ -228,7 +234,6 @@ Simulator.prototype.applyForces = function(dT) {
     this.bodies.forEach(function(body) {
         if (body.exists) {
             body.applyForce(dT);
-            this.simulationTime += dT;
         }
     });
 };
@@ -285,6 +290,12 @@ Simulator.prototype.update = function(dT) {
 
     // Now that all the forces have been calculated, we can apply them to the bodies to update their velocities and positions.
     this.applyForces(dT);
+    
+    this.simulationTime += dT;
+    
+    if (this.orbitTracker !== null) {
+        this.orbitTracker.update(this.simulationTime);
+    }
 
     this.step += 1;
     return;
