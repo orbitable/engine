@@ -1,7 +1,8 @@
 {
   "name": "engine",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "An N-Body simulation library",
+  "license": "Apache-2.0",
   "main": "src/engine.js",
   "scripts": {
     "test": "istanbul cover node_modules/mocha/bin/_mocha && codecov"
@@ -34,5 +35,8 @@
     "istanbul": "^0.4.2",
     "lodash": "^4.0.1",
     "mocha": "^2.4.5"
+  },
+  "dependencies": {
+    "lodash": "^4.0.1"
   }
 }

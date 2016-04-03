@@ -1,3 +1,17 @@
+/* Copyright 2016 Orbitable Team Members
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License.  You may obtain a copy of the
+ * License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 var _          = require('lodash');
 var Body       = require('../src/body.js');
 var expect     = require('chai').expect;
@@ -14,32 +28,70 @@ describe('Simulation', function() {
     
     
     describe('reset', function() {
-  it('should reset with given bodies', function() {
-    var simulation = new Simulation();
-    expect(simulation.bodies).to.be.empty;
+        it('should reset with given bodies', function() {
+            var simulation = new Simulation();
+            expect(simulation.bodies).to.be.empty;
 
-    var body = {
-      mass: 1,
-      position: {x: 1, y: 2},
-      radius: 1,
-      velocity: {x: 3, y: 4},
-      luminosity: 1234
-    };
+            var body = {
+                mass: 1,
+                position: {x: 1, y: 2},
+                radius: 1,
+                velocity: {x: 3, y: 4},
+                luminosity: 1234
+            };
 
-    simulation.reset([body]);
-    expect(simulation.bodies).not.to.be.empty;
+            simulation.reset([body]);
+            expect(simulation.bodies).not.to.be.empty;
 
-    var parsedBody = simulation.bodies[0];
-    expect(parsedBody instanceof Body).to.be.true;
-    expect(parsedBody.mass).to.equal(body.mass);
-    expect(parsedBody.radius).to.equal(body.radius);
-    expect(parsedBody.position.x).to.equal(1);
-    expect(parsedBody.position.y).to.equal(2);
-    expect(parsedBody.velocity.x).to.equal(3);
-    expect(parsedBody.velocity.y).to.equal(4);
-    expect(parsedBody.density).to.be.a('number');
-    expect(parsedBody.luminosity).to.equal(1234);
-  });
+            var parsedBody = simulation.bodies[0];
+            expect(parsedBody instanceof Body).to.be.true;
+            expect(parsedBody.mass).to.equal(body.mass);
+            expect(parsedBody.radius).to.equal(body.radius);
+            expect(parsedBody.position.x).to.equal(1);
+            expect(parsedBody.position.y).to.equal(2);
+            expect(parsedBody.velocity.x).to.equal(3);
+            expect(parsedBody.velocity.y).to.equal(4);
+            expect(parsedBody.density).to.be.a('number');
+            expect(parsedBody.luminosity).to.equal(1234);
+        });
+        
+        it('should reset with actual Body instances given', function() {
+            var simulation = new Simulation();
+            expect(simulation.bodies).to.be.empty;
+
+            var body = new Body(
+                1,
+                new Vector(1,2),
+                new Vector(3,4),
+                1,
+                1234
+            );
+
+            simulation.reset([body]);
+            expect(simulation.bodies).not.to.be.empty;
+
+            var parsedBody = simulation.bodies[0];
+            expect(parsedBody instanceof Body).to.be.true;
+            expect(parsedBody.mass).to.equal(body.mass);
+            expect(parsedBody.radius).to.equal(body.radius);
+            expect(parsedBody.position.x).to.equal(1);
+            expect(parsedBody.position.y).to.equal(2);
+            expect(parsedBody.velocity.x).to.equal(3);
+            expect(parsedBody.velocity.y).to.equal(4);
+            expect(parsedBody.density).to.be.a('number');
+            expect(parsedBody.luminosity).to.equal(1234);
+        });
+        
+        it('should assign empty body array if passed nothing', function() {
+            var simulation = new Simulation();
+            expect(simulation.bodies).to.be.empty;
+            
+            simulation.addBody(new Body());
+
+            simulation.reset();
+            expect(simulation.bodies).to.be.empty;
+
+        });
     });
   
   describe('addBody', function() {
@@ -120,6 +172,44 @@ describe('Simulation', function() {
         
         simulation.deleteBody(parsedID);
         expect(simulation.bodies).to.be.empty;
+
+    });
+  });
+  
+    describe('updateBody', function() {
+    it('should update bodies with given ID and data', function() {
+        var simulation = new Simulation();
+        expect(simulation.bodies).to.be.empty;
+
+        var body = {
+            mass: 1,
+            position: {x: 1, y: 2},
+            radius: 1,
+            velocity: {x: 3, y: 4},
+            luminosity: 1234
+        };
+        var body2 = {
+            mass: 2,
+            position: {x: 2, y: 3},
+            radius: 2,
+            velocity: {x: 4, y: 5},
+            luminosity: 2345
+        };
+
+        simulation.addBody(body);
+        simulation.addBody(body2);
+        expect(simulation.bodies).not.to.be.empty;
+
+        var parsedBody = simulation.bodies[0];
+        var parsedBody2 = simulation.bodies[1];
+        var parsedID = parsedBody2.id;
+        
+        expect(parsedBody instanceof Body).to.be.true;
+        
+        simulation.updateBody(parsedID,{position: {x: 6}});
+        expect(parsedBody.position.x).to.equal(1);
+        expect(parsedBody2.position.x).to.equal(6);
+        expect(parsedBody2.position.y).to.equal(3);
 
     });
   });
@@ -420,6 +510,7 @@ describe('Simulation', function() {
     });
     
   });
+  
   describe('bigNum', function() {
     it('should return a number given scientific notation', function() {
         var simulation = new Simulation();
@@ -504,6 +595,17 @@ describe('Simulation', function() {
     });
     
     describe('assignIDs', function() {
+        
+        it('should end with all bodies having number IDs', function() {
+            var simulation = new Simulation();
+            simulation.bodies = [new Body(),new Body(),new Body(),new Body(),new Body(),new Body()];
+            simulation.assignIDs();
+            
+            simulation.bodies.forEach( function(bodyA) {
+                expect(bodyA.id).not.to.equal(NaN);
+            });
+        });
+        
         it('should end with all bodies having unique IDs', function() {
             var simulation = new Simulation();
             simulation.bodies = [new Body(),new Body(),new Body(),new Body(),new Body(),new Body()];

@@ -1,4 +1,19 @@
+/* Copyright 2016 Orbitable Team Members
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License.  You may obtain a copy of the
+ * License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 var Vector = require('./vector.js');
+var PlanetNamer = require('./planetNamer.js');
 
 /**
  * Constucts a new rigid body to include in a simluation system.
@@ -12,7 +27,8 @@ var Vector = require('./vector.js');
  * @param {int}  luminosity - The initial unit luminosity of the body
  */
 
-function Body(mass, position, velocity, radius, luminosity) {
+function Body(mass, position, velocity, radius, luminosity, name) {
+    this.name = name || new PlanetNamer().getName();
     this.force = new Vector(0,0);
     this.setMassRadius(mass || 5.972 * Math.pow(10,24), radius || 6.3674447 * Math.pow(10,6))
     this.position = position || new Vector(0,0);
@@ -23,6 +39,26 @@ function Body(mass, position, velocity, radius, luminosity) {
 }
 
 Body.prototype = {
+    /**
+     * Modifies attributes of the body
+     *
+     * @param {Object} body - A body-like object
+     */
+    
+    update: function(body) {
+        if (body.position) {
+            this.position.x = body.position.x || this.position.x;
+            this.position.y = body.position.y || this.position.y;
+        }
+        if (body.velocity) {
+            this.velocity.x = body.velocity.x || this.velocity.x;
+            this.velocity.y = body.velocity.y || this.velocity.y;
+        }
+        
+        this.luminosity = body.luminosity || this.luminosity;
+        
+        this.setMassRadius(body.mass || this.mass, body.radius || this.radius);
+    },
 
     /**
      * Adds mass to the body.
@@ -77,14 +113,15 @@ Body.prototype = {
      * @param {int} mass - The new mass
      */
     setMass: function(mass) {
-        this.mass = mass;
-        //this.radius = (0.62035 * Math.pow(this.density, (1/3)))/(Math.pow(this.mass, (1/3)));
-        if (this.density != 0) {
-            this.radius = 0.62035049090 * Math.pow((this.mass/this.density),(1/3));
-        }  
-        else {
+
+        if (this.density === 0) {
             this.destroy();
         }
+        else {
+            this.mass = mass;
+            this.radius = 0.62035049090 * Math.pow((this.mass/this.density),(1/3));
+        }
+
     },
     /**
      * Updates the body's mass and radius. Updates the density accordingly.
@@ -102,6 +139,7 @@ Body.prototype = {
      */
     toString: function() {
         return " ID: " + this.id +
+        " (" + this.name + ")" +
         " E: " + this.exists + 
         " P: " + this.position.toString() + 
         " V: " + this.velocity.toString() + 
