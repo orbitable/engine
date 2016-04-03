@@ -8,17 +8,17 @@ var OrbitTracker = require('./orbit_tracker.js');
  * @constructor
  */
 function Simulator() {
-    
+
     this.idCounter = 0
     this.bodies = [];
-    this.orbitTrackers = [];
-    
+    this.orbitTracker = null;
+
     this.G = this.bigNum(6.674,-11);             // Establish gravitational constant
     this.PI2 = Math.PI * 2;         // Establish this.PI2 constant
-    
+
     this.step = 0;
-    this.simulationTime = 0;
-   
+    this.simulationTime = 0.0;
+
 }
 
 /**
@@ -40,7 +40,7 @@ Simulator.prototype.bigNum = function(b,e) {
 Simulator.prototype.reset = function(bodies) {
 
   bodies = bodies || [];
-  this.orbitTrackers = [];
+  this.orbitTracker = null;
 
   this.bodies = bodies.map(function(body) {
     if (body instanceof Body) return body;
@@ -50,11 +50,11 @@ Simulator.prototype.reset = function(bodies) {
 
     return new Body(body.mass, position, velocity, body.radius, body.luminosity);
   });
-  
+
   this.assignIDs()
   
-  this.orbitTrackers.push(new OrbitTracker(this.bodies[3],this.bodies[0],0));
-  
+  this.orbitTracker = new OrbitTracker(this.bodies[3],this.bodies[0],0);
+
 };
 
 /**
@@ -62,38 +62,39 @@ Simulator.prototype.reset = function(bodies) {
  */
 
 Simulator.prototype.assignIDs = function() {
-    this.idCounter = 0;
-    this.bodies.forEach(function(body) { 
-        body.id = this.idCounter;
-        this.idCounter += 1;
+    var tempID = 0;
+    this.bodies.forEach(function(body) {
+        body.id = tempID;
+        tempID += 1;
     });
+    this.idCounter = tempID;
 };
 
 /**
- * Adds a body given an x and y coordinate. Other attributes are generated.
- * @param {Number}  x - x position coordinate
- * @param {Number}  y - y position coordinate
+ * Adds a body given an Object with any attributes, the rest will be generated
+ * @param {Object}  body - Body or Body-like object with any combination of attributes
  */
 
 Simulator.prototype.addBody = function(body) {
-    
+
     if (body.position) {
         var position = new Vector(body.position.x, body.position.y);
     }
     if (body.velocity) {
         var velocity = new Vector(body.velocity.x, body.velocity.y);
     }
-    
+
     var newBody = new Body(
         body.mass,
         position,
         velocity,
         body.radius,
         body.luminosity
-    ); 
+    );
     newBody.id = this.idCounter;
+    // console.log(newBody.id);
     this.idCounter += 1;
-    this.bodies.push(newBody); 
+    this.bodies.push(newBody);
 };
 
 /**
@@ -102,9 +103,33 @@ Simulator.prototype.addBody = function(body) {
  */
 
 Simulator.prototype.deleteBody = function(id) {
-    this.bodies = this.bodies.filter(function(body) { 
-        return (body.id != id); 
+    this.bodies = this.bodies.filter(function(body) {
+        return (body.id != id);
     });
+};
+
+/**
+ * Updates body with given id with given data
+ * @param {Number}  id - Unique id of body to be updated
+ * @param {Object}  data - Data to update with
+ */
+
+Simulator.prototype.updateBody = function(id,data) {
+    this.bodies = this.bodies.map(function(body) {
+        if(body.id == id) {
+            body.update(data);
+        }
+
+        return body;
+    });
+    // this.bodies = this.bodies.filter(function(body) {
+    //     return (body.id === id);
+    // }).forEach(function(body) {
+    //     body.update(data);
+    // });
+    // this.bodies.forEach(function(body){
+    //     if(body.id === id)
+    // })
 };
 
 /**
@@ -149,9 +174,9 @@ Simulator.prototype.getAngle = function(bodyA,bodyB) {
     if (bodyB.position.x < bodyA.position.x) {
         theta += Math.PI;
     }
-    if (theta >= this.PI2) {
-        theta -= this.PI2;
-    }
+    // if (theta >= this.PI2) {
+    //     theta -= this.PI2;
+    // }
     if (theta < 0) {
         theta += this.PI2;
     }
@@ -218,7 +243,7 @@ Simulator.prototype.update = function(dT) {
                 // If exists
                  if (this.bodies[b].exists) {
                     var bodyB = this.bodies[b];
-                    
+
                     // Get distance between bodies
                     var distance = bodyA.position.distanceTo(bodyB.position);
 
@@ -233,33 +258,31 @@ Simulator.prototype.update = function(dT) {
 
                     	// Find the direction t
                         var forceAngle = this.getAngle(bodyA,bodyB);
-                        // Get magnitude of force for gravitational function 
+                        // Get magnitude of force for gravitational function
                         var forceMagnitude = this.getGravity(bodyA.mass,bodyB.mass,distance);
                         // Apply magnitude to vector using direction theta
                         var forceVector = this.getVector(forceAngle,forceMagnitude);
-                        
+
                         // Adds force to body
                         bodyA.addForce(forceVector);
                         bodyB.addForce(forceVector.scalarProduct(-1));
                     }
                 }
-                
+
             }
         }
     }
 
     // Now that all the forces have been calculated, we can apply them to the bodies to update their velocities and positions.
     this.applyForces(dT);
-
-    this.step += 1;
     
     this.simulationTime += dT;
-
-    for(var i = 0; i < this.orbitTrackers.length; i++) {
-        this.orbitTrackers[i].update(this.simulationTime);
+    
+    if (this.orbitTracker !== null) {
+        this.orbitTracker.update(this.simulationTime);
     }
 
-    
+    this.step += 1;
     return;
 
 };
@@ -270,10 +293,10 @@ Simulator.prototype.update = function(dT) {
  */
 
 Simulator.prototype.toString = function() {
-    
+
     var line = "-- CURRENT STATE -- (" + this.step + ")\n" +
         "Simulation Time: " + this.simulationTime;
-        
+
     for(var i = 0; i < this.bodies.length; i++) {
         if (this.bodies[i].exists) {
             line = line + "ID: " + i + "\t " + this.bodies[i].toString();
@@ -282,7 +305,7 @@ Simulator.prototype.toString = function() {
             line = line + "ID: " + i + "\t (destroyed)";
         }
     }
-    
+
     return line + "\n";
 
 };
