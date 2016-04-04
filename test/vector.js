@@ -63,17 +63,17 @@ describe('Vector', function () {
   describe('add', function() {
     var identity = new Vector(0,0);
 
-    it('should update the vector', function() {
+    it('should not change the vectors', function() {
       var value = origin.add(point);
-      expect(origin.x).to.equal(1);
-      expect(origin.y).to.equal(1);
+      expect(origin.x).to.equal(0);
+      expect(origin.y).to.equal(0);
       expect(point.x).to.equal(1);
       expect(point.y).to.equal(1);
     });
     it('should correctly sum the components', function() {
-      point.add(new Vector(-1, -1));
-      expect(point.x).to.equal(0);
-      expect(point.y).to.equal(0);
+      var value = point.add(new Vector(-1, -1));
+      expect(value.x).to.equal(0);
+      expect(value.y).to.equal(0);
     });
     it('should be associative', function() {
       var left = new Vector(0,0);
@@ -84,12 +84,12 @@ describe('Vector', function () {
       var v1 = left.add(point);
       var v2 = right.add(origin);
 
-      expect(_.isEqual(left, right)).to.be.true;
+      expect(_.isEqual(v1, v2)).to.be.true;
     });
     it('should have additive identity', function() {
       var original = point;
-      point.add(identity);
-      expect(_.isEqual(original, point)).to.be.true;
+      var value = point.add(identity);
+      expect(_.isEqual(original, value)).to.be.true;
     });
   });
   

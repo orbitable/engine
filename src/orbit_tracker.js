@@ -10,24 +10,7 @@ var Vector = require('./vector.js');
  * @param {Vector} startTime  - The timestamp for the start of the first orbit
  */
 function OrbitTracker(targetBody,centerBody,startTime) {
-    
-    this.targetBody = targetBody;
-    this.centerBody = centerBody;
-    
-    this.orbitCount = 0;
-    this.orbitTime = 0;
-    
-    this.running = false;
-    if ((this.targetBody instanceof Body) && (this.centerBody instanceof Body)) {
-        console.log(this.targetBody.position);
-        console.log(this.centerBody.position);
-        this.initialize(startTime);
-    }
-    
-    
-    
-    //console.log("ORBIT TRACKING INITIATED:\n" + this.toString());
-   
+    this.reset(targetBody,centerBody,startTime);
 }
 
 /**
@@ -36,7 +19,6 @@ function OrbitTracker(targetBody,centerBody,startTime) {
  * @param {Number} startTime - Start time for this orbit
  */
 OrbitTracker.prototype.initialize = function(startTime) {
-    this.running = true;
     this.startAngle = OrbitTracker.getAngle(this.targetBody.position,this.centerBody.position) || 0;
     this.lastAngle = this.startAngle;
     this.currentAngle = this.startAngle;
@@ -45,10 +27,48 @@ OrbitTracker.prototype.initialize = function(startTime) {
     
     this.semiComplete = false;
     
-    this.relativePosition = this.targetBody.position;
-    this.relativePosition.add(this.centerBody.position.scalarProduct(-1));
+    this.relativePosition = this.targetBody.position.add(this.centerBody.position.scalarProduct(-1));
     this.getStartQuads(this.relativePosition);
 };
+
+OrbitTracker.prototype.setState = function(state,startTime) {
+    if (state) {
+        this.reset(this.targetBody,this.centerBody,startTime);
+        this.running = true;
+    }
+    else {
+        this.running = false;
+    }
+}
+
+OrbitTracker.prototype.reset = function(targetBody,centerBody,startTime) {
+    this.targetBody = targetBody;
+    this.centerBody = centerBody;
+    
+    this.orbitCount = 0;
+    this.orbitTime = 0;
+    
+    this.minTime = Number.POSITIVE_INFINITY;
+    this.maxTime = Number.NEGATIVE_INFINITY;
+    this.timeRange = 0;
+    
+    this.running = false;
+    if ((this.targetBody instanceof Body) && (this.centerBody instanceof Body)) {
+        this.initialize(startTime);
+    }
+}
+
+OrbitTracker.prototype.setCenterBody = function(centerBody,startTime) {
+    if (centerBody != this.targetBody) {
+        this.reset(this.targetBody,centerBody,startTime);
+    } 
+}
+
+OrbitTracker.prototype.setTargetBody = function(targetBody,startTime) {
+    if (targetBody != this.centerBody) {
+        this.reset(targetBody,this.centerBody,startTime);
+    } 
+}
 
 /**
  * Sets initial startQuad and goalQuad values
@@ -73,11 +93,17 @@ OrbitTracker.PI2 = Math.PI * 2.0;
  */
 OrbitTracker.prototype.completeOrbit = function(time) {
     
+    
+    
     this.orbitCount += 1;
     console.log("TIME: " + ((time - this.startTime)));
     this.orbitTime = 
         this.orbitTime * ((this.orbitCount-1)/(this.orbitCount)) + 
         (time - this.startTime) * (1/(this.orbitCount));
+        
+    this.minTime = Math.min(this.minTime,this.orbitTime);
+    this.maxTime = Math.max(this.maxTime,this.orbitTime);
+    this.timeRange = (Math.max(0.0,this.maxTime - this.minTime)/this.orbitTime) * 100.0;
     
     this.initialize(time);
     
@@ -91,7 +117,7 @@ OrbitTracker.prototype.completeOrbit = function(time) {
  * @param {Number} deltaTime  - The timestep of the current simulation frame
  */
 OrbitTracker.prototype.update = function(updateTime,deltaTime) {
-    
+
     if (this.running) {
     
         this.currentAngle = OrbitTracker.getAngle(this.targetBody.position,this.centerBody.position);
@@ -123,8 +149,7 @@ OrbitTracker.prototype.checkFull = function(updateTime) {
  *
  */
 OrbitTracker.prototype.checkSemi = function() {
-    this.relativePosition = this.targetBody.position;
-    this.relativePosition.add(this.centerBody.position.scalarProduct(-1));
+    this.relativePosition = this.targetBody.position.add(this.centerBody.position.scalarProduct(-1));
     if (OrbitTracker.getQuad(this.relativePosition) === this.goalQuad) {
         this.semiComplete = true;
     }
