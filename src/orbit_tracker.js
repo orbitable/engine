@@ -83,7 +83,6 @@ OrbitTracker.prototype.getStartQuads = function(quadPosition) {
     }
 };
 
-
 OrbitTracker.PI2 = Math.PI * 2.0;
 
 /**
@@ -96,14 +95,13 @@ OrbitTracker.prototype.completeOrbit = function(time) {
     
     
     this.orbitCount += 1;
-    console.log("TIME: " + ((time - this.startTime)));
     this.orbitTime = 
         this.orbitTime * ((this.orbitCount-1)/(this.orbitCount)) + 
         (time - this.startTime) * (1/(this.orbitCount));
         
     this.minTime = Math.min(this.minTime,this.orbitTime);
     this.maxTime = Math.max(this.maxTime,this.orbitTime);
-    this.timeRange = (Math.max(0.0,this.maxTime - this.minTime)/this.orbitTime) * 100.0;
+    this.timeRange = (Math.max(0.0,this.maxTime - this.minTime)/this.orbitTime).toPrecision(3) * 100.0;
     
     this.initialize(time);
     
@@ -119,17 +117,22 @@ OrbitTracker.prototype.completeOrbit = function(time) {
 OrbitTracker.prototype.update = function(updateTime,deltaTime) {
 
     if (this.running) {
-    
-        this.currentAngle = OrbitTracker.getAngle(this.targetBody.position,this.centerBody.position);
         
-        if(this.semiComplete) {
-            this.checkFull(updateTime);
-        } 
-        else {
-            this.checkSemi();
+        if ((this.targetBody instanceof Body) && (this.centerBody instanceof Body)) {
+            this.currentAngle = OrbitTracker.getAngle(this.targetBody.position,this.centerBody.position);
+            
+            if(this.semiComplete) {
+                this.checkFull(updateTime);
+            } 
+            else {
+                this.checkSemi();
+            }
+            
+            this.lastAngle = this.currentAngle;
         }
-        
-        this.lastAngle = this.currentAngle;
+        else {
+            this.running = false;
+        }
     }
 };
 
