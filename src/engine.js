@@ -26,7 +26,7 @@ function Simulator() {
     this.idCounter = 0
     this.bodies = [];
 
-    this.orbitTracker = null;
+    this.orbitTracker = new OrbitTracker();
 
     this.G = this.bigNum(6.674,-11);             // Establish gravitational constant
     this.PI2 = Math.PI * 2;         // Establish this.PI2 constant
@@ -55,7 +55,7 @@ Simulator.prototype.bigNum = function(b,e) {
 Simulator.prototype.reset = function(bodies) {
 
   bodies = bodies || [];
-  this.orbitTracker = null;
+  this.orbitTracker = new OrbitTracker();
 
   this.bodies = bodies.map(function(body) {
     if (body instanceof Body) return body;
