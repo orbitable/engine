@@ -27,13 +27,14 @@ var PlanetNamer = require('./planetNamer.js');
  * @param {int}  luminosity - The initial unit luminosity of the body
  */
 
-function Body(mass, position, velocity, radius, luminosity, name) {
+function Body(mass, position, velocity, radius, luminosity, name, color) {
     this.name = name || new PlanetNamer().getName();
     this.force = new Vector(0,0);
     this.setMassRadius(mass || 5.972 * Math.pow(10,24), radius || 6.3674447 * Math.pow(10,6))
     this.position = position || new Vector(0,0);
     this.velocity = velocity || new Vector(0,0);
     this.luminosity = luminosity || 0;
+    this.color = color || this.generateColor(this.luminosity,this.mass,this.radius);
     this.exists = true;
     this.id = -1
 }
@@ -58,6 +59,8 @@ Body.prototype = {
         this.luminosity = body.luminosity || this.luminosity;
         
         this.setMassRadius(body.mass || this.mass, body.radius || this.radius);
+        
+        this.color = body.color || this.color;
     },
 
     /**
@@ -154,6 +157,55 @@ Body.prototype = {
     destroy: function() {
         this.radius = 0;
         this.exists = false;
+    },
+    
+    generateColor: function(luminosity,mass,radius) {
+        //Constant from Stefan-Boltzmann Law
+        var sigma = 5.6704 * Math.pow(10,-8);
+        var color = 'mistyrose';
+
+        if (luminosity > 0) {
+            //convert solar units to watts for temp calculation
+            var lum = luminosity * 3.827 * Math.pow(10,26);
+
+            // this assumes that the radius is stored as the #.## term of #.## *10^8
+            // meters, may need to change later
+            var temp = Math.sqrt(lum / (4 * Math.PI * Math.pow(radius * Math.pow(10,8), 2) * sigma));
+
+            if (temp >= 28000) {
+                color = '#1a1aff';
+            } else if (temp >= 10000) {
+                color = '#80d4ff';
+            } else if (temp >= 7500) {
+                color = '#ffffff';
+            } else if (temp >= 6000) {
+                color = '#ffff80';
+            } else if (temp >= 4900) {
+                color = '#ffff1a';
+            } else if (temp >= 3500) {
+                color = '#ff6600';
+            } else {
+                color = '#ff0000';
+            }
+        } else {
+            var mod = mass % 700;
+            if (mod >= 600) {
+                color = 'darkturquoise';
+            } else if (mod >= 500) {
+                color = 'darkseagreen';
+            } else if (mod >= 400) {
+                color = 'lightsalmon';
+            } else if (mod >= 300) {
+                color = 'plum';
+            } else if (mod >= 200) {
+                color = 'lightsteelblue';
+            } else if (mod >= 100) {
+                color = 'lightseagreen';
+            } else {
+                color = 'lightgreen';
+            }
+        }
+        return color;
     }
 };
 
