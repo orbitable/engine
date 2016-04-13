@@ -341,4 +341,28 @@ describe('Body', function() {
         });
     });
     
+    describe('getColor', function() {
+        it('should return appropriate color', function() {
+            var body = new Body();
+            
+            expect(body.generateColor(0,601)).to.equal('darkturquoise');
+            expect(body.generateColor(0,501)).to.equal('darkseagreen');
+            expect(body.generateColor(0,401)).to.equal('lightsalmon');
+            expect(body.generateColor(0,301)).to.equal('plum');
+            expect(body.generateColor(0,201)).to.equal('lightsteelblue');
+            expect(body.generateColor(0,101)).to.equal('lightseagreen');
+            expect(body.generateColor(0,  1)).to.equal('lightgreen');
+            
+            expect(body.generateColor(0.0001,1,1)).to.equal('#1a1aff');
+            expect(body.generateColor(0.000000009,1,1)).to.equal('#80d4ff');
+            expect(body.generateColor(0.0000000015,1,1)).to.equal('#ffffff');
+            expect(body.generateColor(0.000000001,1,1)).to.equal('#ffff80');
+            expect(body.generateColor(0.0000000005,1,1)).to.equal('#ffff1a');
+            expect(body.generateColor(0.00000000025,1,1)).to.equal('#ff6600');
+            expect(body.generateColor(0.0000000001,1,1)).to.equal('#ff0000');
+            
+         
+        });
+    });
+    
 });
