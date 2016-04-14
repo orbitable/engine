@@ -13,6 +13,7 @@
  */
 
 var Body = require('./body.js');
+var Note = require('./note.js');
 var Vector = require('./vector.js');
 var OrbitTracker = require('./orbit_tracker.js');
 
@@ -25,7 +26,13 @@ function Simulator() {
 
     this.idCounter = 0
     this.bodies = [];
-
+    this.notes = [];
+    
+    this.notes.push(new Note({position:  new Vector( 149597870700, 189597870700), startTime:  4000000, duration: 4000000, title: "TEST TITLE 1", text: "TEST TEXT 1"}));
+    this.notes.push(new Note({position:  new Vector( 149597870700,-189597870700), startTime:  8000000, duration: 4000000, title: "TEST TITLE 2", text: "TEST TEXT 2"}));
+    this.notes.push(new Note({position:  new Vector(-149597870700, 149597870700), startTime: 12000000, duration: 4000000, title: "TEST TITLE 3", text: "TEST TEXT 3"}));
+    this.notes.push(new Note({position:  new Vector(-149597870700,-149597870700), startTime: 16000000, duration: 4000000, title: "TEST TITLE 4", text: "TEST TEXT 4"}));    
+    
     this.orbitTracker = new OrbitTracker();
 
     this.G = this.bigNum(6.674,-11);             // Establish gravitational constant
@@ -33,6 +40,8 @@ function Simulator() {
 
     this.step = 0;
     this.simulationTime = 0.0;
+    
+    this.selectedBody = {}
 
 }
 
