@@ -15,15 +15,10 @@
 var Vector = require('./vector.js');
 
 /**
- * Constucts a new rigid body to include in a simluation system.
+ * Constucts a new note.
  *
  * @constructor
- * @param {int}  mass       - The initial unit mass of body
- * @param {Vector} postion    - The initial position of the body
- * @param {Vector} velocity   - The initial unit velocity of the body
- * @param {int}  radius     - The initial unit radius of the body
- * @param {int}  density    - The initial unit density of the body
- * @param {int}  luminosity - The initial unit luminosity of the body
+ * @param {Object}  note       - Object that stores any of the attributes that want to be passed in constructor
  */
 
 function Note(note) {
@@ -38,9 +33,9 @@ function Note(note) {
 
 Note.prototype = {
     /**
-     * Modifies attributes of the body
+     * Checks if the note should be shown given current time
      *
-     * @param {Object} body - A body-like object
+     * @param {Number} currentTime - current time stamp
      */
     
     check: function(currentTime) {
@@ -48,7 +43,7 @@ Note.prototype = {
     },
 
     /**
-     * Returns body info in string form
+     * Returns note info in string forms
      *
      */
     toString: function() {
