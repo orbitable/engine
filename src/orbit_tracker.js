@@ -93,15 +93,15 @@ OrbitTracker.PI2 = Math.PI * 2.0;
 OrbitTracker.prototype.completeOrbit = function(time) {
     
     
-    
+    var thisTime = (time - this.startTime);
     this.orbitCount += 1;
     this.orbitTime = 
         this.orbitTime * ((this.orbitCount-1)/(this.orbitCount)) + 
-        (time - this.startTime) * (1/(this.orbitCount));
+        thisTime * (1/(this.orbitCount));
         
-    this.minTime = Math.min(this.minTime,this.orbitTime);
-    this.maxTime = Math.max(this.maxTime,this.orbitTime);
-    this.timeRange = (Math.max(0.0,this.maxTime - this.minTime)/this.orbitTime).toPrecision(3) * 100.0;
+    this.minTime = Math.min(this.minTime,thisTime);
+    this.maxTime = Math.max(this.maxTime,thisTime);
+    this.timeRange = Math.round((Math.max(0.0,this.maxTime - this.minTime)/this.orbitTime)*100.0);
     
     this.initialize(time);
     
@@ -121,14 +121,10 @@ OrbitTracker.prototype.update = function(updateTime,deltaTime) {
         if ((this.targetBody instanceof Body) && (this.centerBody instanceof Body)) {
             this.currentAngle = OrbitTracker.getAngle(this.targetBody.position,this.centerBody.position);
             
-            if(this.semiComplete) {
-                this.checkFull(updateTime);
-            } 
-            else {
-                this.checkSemi();
-            }
-            
+            this.checkFull(updateTime);
+            this.checkSemi();
             this.lastAngle = this.currentAngle;
+            
         }
         else {
             this.running = false;
@@ -142,8 +138,10 @@ OrbitTracker.prototype.update = function(updateTime,deltaTime) {
  * @param {Number} updateTime - The timestamp of the current state of the simulator
  */
 OrbitTracker.prototype.checkFull = function(updateTime) {
-    if (OrbitTracker.checkCross(this.lastAngle,this.currentAngle,this.startAngle)) {
-        this.completeOrbit(updateTime);
+    if (this.semiComplete) {
+        if (OrbitTracker.checkCross(this.lastAngle,this.currentAngle,this.startAngle)) {
+            this.completeOrbit(updateTime);
+        }
     }
 };
 
@@ -152,9 +150,11 @@ OrbitTracker.prototype.checkFull = function(updateTime) {
  *
  */
 OrbitTracker.prototype.checkSemi = function() {
-    this.relativePosition = this.targetBody.position.add(this.centerBody.position.scalarProduct(-1));
-    if (OrbitTracker.getQuad(this.relativePosition) === this.goalQuad) {
-        this.semiComplete = true;
+    if (!this.semiComplete) {
+        this.relativePosition = this.targetBody.position.add(this.centerBody.position.scalarProduct(-1));
+        if (OrbitTracker.getQuad(this.relativePosition) === this.goalQuad) {
+            this.semiComplete = true;
+        }
     }
 };
 
