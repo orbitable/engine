@@ -104,8 +104,6 @@ OrbitTracker.prototype.completeOrbit = function(time) {
     this.timeRange = Math.round((Math.max(0.0,this.maxTime - this.minTime)/this.orbitTime)*100.0);
     
     this.initialize(time);
-    
-    //console.log(this.toString());
 };
 
 /**
@@ -119,6 +117,7 @@ OrbitTracker.prototype.update = function(updateTime,deltaTime) {
     if (this.running) {
         
         if ((this.targetBody instanceof Body) && (this.centerBody instanceof Body)) {
+            
             this.currentAngle = OrbitTracker.getAngle(this.targetBody.position,this.centerBody.position);
             
             this.checkFull(updateTime);
@@ -138,6 +137,7 @@ OrbitTracker.prototype.update = function(updateTime,deltaTime) {
  * @param {Number} updateTime - The timestamp of the current state of the simulator
  */
 OrbitTracker.prototype.checkFull = function(updateTime) {
+    
     if (this.semiComplete) {
         if (OrbitTracker.checkCross(this.lastAngle,this.currentAngle,this.startAngle)) {
             this.completeOrbit(updateTime);
@@ -150,6 +150,7 @@ OrbitTracker.prototype.checkFull = function(updateTime) {
  *
  */
 OrbitTracker.prototype.checkSemi = function() {
+
     if (!this.semiComplete) {
         this.relativePosition = this.targetBody.position.add(this.centerBody.position.scalarProduct(-1));
         if (OrbitTracker.getQuad(this.relativePosition) === this.goalQuad) {
@@ -170,9 +171,10 @@ OrbitTracker.getAngle = function(positionA,positionB) {
     if (positionB.x < positionA.x) {
         theta += Math.PI;
     }
-    if (theta >= OrbitTracker.PI2) {
-        theta -= OrbitTracker.PI2;
-    }
+    // SHOULDN'T BE NECESSARY
+    // if (theta >= OrbitTracker.PI2) {
+    //     theta -= OrbitTracker.PI2;
+    // }
     if (theta < 0) {
         theta += OrbitTracker.PI2;
     }

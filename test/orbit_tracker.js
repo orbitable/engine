@@ -90,27 +90,44 @@ describe('OrbitTracker', function () {
         });
     });
     
-    // describe('checkFull', function() {
-    //     it('should complete orbit if startAngle is crossed', function() {
-    //         var o = new OrbitTracker(new Body(1,new Vector(1,1)), new Body(1,new Vector(0,0)), 0);
-    //         o.lastAngle = 0.1;
-    //         o.startAngle = 0.2;
-    //         o.currentAngle = 0.3;
-    //         this.semiComplete = true;
-    //         o.checkFull(100);
-    //         expect(o.orbitCount).to.equal(1); 
-    //     });
-    // });
-    // describe('checkSemi', function() {
-    //     it('should complete orbit if startAngle is crossed', function() {
-    //         var o = new OrbitTracker(new Body(1,new Vector(1,1)), new Body(1,new Vector(0,0)), 0);
-    //         this.semiComplete = false;
-    //         this.targetBody.position = new Vector(-1,-1);
-    //         o.checkSemi();
-    //         expect(o.orbitCount).to.equal(1);  
-    //     });
-    // });
+    describe('checkFull', function() {
+        it('should complete orbit if startAngle is crossed', function() {
+            var o = new OrbitTracker(new Body(1,new Vector(1,1)), new Body(1,new Vector(0,0)), 0);
+            o.lastAngle = 0.1;
+            o.startAngle = 0.2;
+            o.currentAngle = 0.3;
+            o.semiComplete = true;
+            o.checkFull(100);
+            expect(o.orbitCount).to.equal(1); 
+        });
+    });
+    describe('checkSemi', function() {
+        it('should complete orbit if startAngle is crossed', function() {
+            var o = new OrbitTracker(new Body(1,new Vector(1,1)), new Body(1,new Vector(0,0)), 0);
+            o.semiComplete = false;
+            o.targetBody.position = new Vector(-1,-1);
+            o.checkSemi();
+            expect(o.semiComplete).to.equal(true);  
+        });
+    });
     describe('update', function() {
+        it('should check for appropriate state', function() {
+            var o = new OrbitTracker(new Body(1,new Vector(1,1)), new Body(1,new Vector(0,0)), 0);
+            o.lastAngle = 0.1;
+            o.startAngle = 0.2;
+            o.targetBody.position = new Vector(0,1);
+            o.setState(true,0);
+            o.semiComplete = true;
+            o.update(100);
+            expect(o.orbitCount).to.equal(1);
+
+            o = new OrbitTracker(new Body(1,new Vector(1,1)), new Body(1,new Vector(0,0)), 0);
+            o.setState(true,0);
+            o.semiComplete = false;
+            o.targetBody.position = new Vector(-1,-1);
+            o.update(100);
+            expect(o.semiComplete).to.equal(true);  
+        });
         it('should abort if centerBody is null', function() {
             var o = new OrbitTracker(new Body(1,new Vector(1,1)), new Body(1,new Vector(0,0)), 0);
             o.centerBody = null;
@@ -189,6 +206,15 @@ describe('OrbitTracker', function () {
             expect(OrbitTracker.checkCross(0.0,0.0,0.1)).to.be.equal(false);
             expect(OrbitTracker.checkCross(0.0,0.0,Math.PI * 2 - 0.1)).to.be.equal(false);
             
+        });
+    });
+    
+    describe('toString', function() {
+        it('should return a string', function() {
+            var o = new OrbitTracker(new Body(1,new Vector(1,1)), new Body(1,new Vector(0,0)), 0);
+            
+            expect(o.toString()).to.be.a('string');
+         
         });
     });
     
