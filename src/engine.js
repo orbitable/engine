@@ -42,6 +42,8 @@ function Simulator() {
     this.simulationTime = 0.0;
     
     this.selectedBody = {}
+    
+    this.pauseFrame = false;
 
 }
 
@@ -254,61 +256,66 @@ Simulator.prototype.applyForces = function(dT) {
 
 Simulator.prototype.update = function(dT) {
 
-    // For each body
-    for (var a = 0; a < this.bodies.length-1; a++) {
+    if (this.pauseFrame) {
+        this.pauseFrame = false;
+    }
+    else {
+        
+        // For each body
+        for (var a = 0; a < this.bodies.length-1; a++) {
 
-        // If exists
-        if (this.bodies[a].exists) {
-            var bodyA = this.bodies[a];
+            // If exists
+            if (this.bodies[a].exists) {
+                var bodyA = this.bodies[a];
 
-            // For each body below bodyA
-            for (var b = a+1; b < this.bodies.length; b++) {
+                // For each body below bodyA
+                for (var b = a+1; b < this.bodies.length; b++) {
 
-                // If exists
-                 if (this.bodies[b].exists) {
-                    var bodyB = this.bodies[b];
+                    // If exists
+                    if (this.bodies[b].exists) {
+                        var bodyB = this.bodies[b];
 
-                    // Get distance between bodies
-                    var distance = bodyA.position.distanceTo(bodyB.position);
+                        // Get distance between bodies
+                        var distance = bodyA.position.distanceTo(bodyB.position);
 
-                    // If collision
-                    if (this.checkCollision(bodyA,bodyB,distance)) {
-                        // Apply collision
-                        this.applyCollision(bodyA,bodyB);
+                        // If collision
+                        if (this.checkCollision(bodyA,bodyB,distance)) {
+                            // Apply collision
+                            this.applyCollision(bodyA,bodyB);
+                        }
+
+                        // If no collision
+                        else {
+
+                            // Find the direction t
+                            var forceAngle = this.getAngle(bodyA,bodyB);
+                            // Get magnitude of force for gravitational function
+                            var forceMagnitude = this.getGravity(bodyA.mass,bodyB.mass,distance);
+                            // Apply magnitude to vector using direction theta
+                            var forceVector = this.getVector(forceAngle,forceMagnitude);
+
+                            // Adds force to body
+                            bodyA.addForce(forceVector);
+                            bodyB.addForce(forceVector.scalarProduct(-1));
+                        }
                     }
 
-                    // If no collision
-                    else {
-
-                    	// Find the direction t
-                        var forceAngle = this.getAngle(bodyA,bodyB);
-                        // Get magnitude of force for gravitational function
-                        var forceMagnitude = this.getGravity(bodyA.mass,bodyB.mass,distance);
-                        // Apply magnitude to vector using direction theta
-                        var forceVector = this.getVector(forceAngle,forceMagnitude);
-
-                        // Adds force to body
-                        bodyA.addForce(forceVector);
-                        bodyB.addForce(forceVector.scalarProduct(-1));
-                    }
                 }
-
             }
         }
+
+        // Now that all the forces have been calculated, we can apply them to the bodies to update their velocities and positions.
+        this.applyForces(dT);
+        
+        this.simulationTime += dT;
+        
+        if (this.orbitTracker !== null) {
+            this.orbitTracker.update(this.simulationTime);
+        }
+
+        this.step += 1;
+        return;
     }
-
-    // Now that all the forces have been calculated, we can apply them to the bodies to update their velocities and positions.
-    this.applyForces(dT);
-    
-    this.simulationTime += dT;
-    
-    if (this.orbitTracker !== null) {
-        this.orbitTracker.update(this.simulationTime);
-    }
-
-    this.step += 1;
-    return;
-
 };
 
 /**
