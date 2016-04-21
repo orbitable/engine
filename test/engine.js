@@ -28,6 +28,18 @@ describe('Simulation', function() {
     
     
     describe('reset', function() {
+        it('set the simulation time to 0', function() {
+          var simulation = new Simulation();
+          expect(simulation.simulationTime).to.be.equal(0.0);
+
+          simulation.update(1000);
+
+          expect(simulation.simulationTime).to.be.equal(1000.0);
+
+          simulation.reset([]);
+          expect(simulation.simulationTime).to.be.equal(0.0);
+        });
+
         it('should reset with given bodies', function() {
             var simulation = new Simulation();
             expect(simulation.bodies).to.be.empty;

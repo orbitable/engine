@@ -77,10 +77,13 @@ Simulator.prototype.reset = function(bodies) {
     var position = new Vector(body.position.x, body.position.y);
     var velocity = new Vector(body.velocity.x, body.velocity.y);
 
+
     return new Body(body.mass, position, velocity, body.radius, body.luminosity);
   });
 
-  this.assignIDs()
+  this.assignIDs();
+  
+  this.simulationTime = 0.0;
   
   this.orbitTracker = new OrbitTracker(this.bodies[3],this.bodies[0],0);
 
@@ -291,8 +294,7 @@ Simulator.prototype.update = function(dT) {
 
     if (this.pauseFrame) {
         this.pauseFrame = false;
-    }
-    else {
+    } else {
         
         // For each body
         for (var a = 0; a < this.bodies.length-1; a++) {
