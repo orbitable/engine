@@ -25,6 +25,7 @@ var OrbitTracker = require('./orbit_tracker.js');
 function Simulator() {
 
     this.idCounter = 0
+    this.idCounterNotes = 0
     this.bodies = [];
     this.notes = [];
     
@@ -44,6 +45,8 @@ function Simulator() {
     this.selectedBody = {}
     
     this.pauseFrame = false;
+    
+    this.assignIDs();
 
 }
 
@@ -89,11 +92,22 @@ Simulator.prototype.reset = function(bodies) {
 
 Simulator.prototype.assignIDs = function() {
     var tempID = 0;
+    
     this.bodies.forEach(function(body) {
         body.id = tempID;
         tempID += 1;
     });
+    
     this.idCounter = tempID;
+    
+    tempID = 0;
+    
+    this.notes.forEach(function(note) {
+        note.id = tempID;
+        tempID += 1;
+    });
+    
+    this.idCounterNotes = tempID;
 };
 
 /**
@@ -123,6 +137,18 @@ Simulator.prototype.addBody = function(body) {
     this.bodies.push(newBody);
 };
 
+Simulator.prototype.addNote = function(note) {
+
+    note.id = this.idCounterNotes;
+    this.idCounterNotes += 1;
+
+    if (note.position) {
+        note.position = new Vector(note.position.x, note.position.y);
+    }
+    
+    this.notes.push(new Note(note));
+};
+
 /**
  * Deletes body with given id
  * @param {Number}  id - Unique id of body to be deleted
@@ -133,6 +159,13 @@ Simulator.prototype.deleteBody = function(id) {
         return (body.id != id);
     });
 };
+
+Simulator.prototype.deleteNote = function(id) {
+    this.notes = this.notes.filter(function(note) {
+        return (note.id != id);
+    });
+};
+
 
 /**
  * Updates body with given id with given data
