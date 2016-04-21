@@ -25,9 +25,10 @@ function Note(note) {
 
     this.position  = note.position  || new Vector(0,0);
     this.startTime = note.startTime || 0;
-    this.duration  = note.duration  || 5;
+    this.duration  = note.duration  || 100000000;
     this.title     = note.title     || "Note";
     this.text      = note.text      || "Look!";
+    this.id        = note.id;       
     
 }
 
