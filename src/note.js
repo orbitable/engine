@@ -34,6 +34,25 @@ function Note(note) {
 
 Note.prototype = {
     /**
+     * Modifies attributes of the note
+     *
+     * @param {Object} note - A note-like object
+     */
+    
+    update: function(note) {
+        if (note.position) {
+            this.position.x = note.position.x || this.position.x;
+            this.position.y = note.position.y || this.position.y;
+        }
+        
+        this.startTime = note.startTime || this.startTime;
+        this.duration = note.duration || this.duration;
+        this.title = note.title || this.title;
+        this.text = note.text || this.text;
+
+    },
+    
+    /**
      * Checks if the note should be shown given current time
      *
      * @param {Number} currentTime - current time stamp
