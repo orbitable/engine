@@ -191,6 +191,16 @@ Simulator.prototype.updateBody = function(id,data) {
     // })
 };
 
+Simulator.prototype.updateNote = function(id,data) {
+    this.notes = this.notes.map(function(note) {
+        if(note.id == id) {
+            note.update(data);
+        }
+
+        return note;
+    });
+};
+
 /**
  * Returns true if bodies are colliding, false otherwise
  * @param {Body}  bodyA - first Body
