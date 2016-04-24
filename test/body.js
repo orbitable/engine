@@ -102,6 +102,35 @@ describe('Body', function() {
             expect(b.radius).to.equal(1);
             expect(b.luminosity).to.equal(1);
         });
+
+        it('should parse position as a float', function() {
+          var position = {position: {x: "23.2"}};
+
+          b.update(position);
+          expect(b.position.x).to.equal(23.2);
+        });
+
+        it('should parse velocity as a string', function() {
+          var velocity = {velocity: {x: "-100.232"}};
+
+          b.update(velocity);
+          expect(b.velocity.x).to.equal(-100.232);
+        });
+
+        it('retain previous value when given value is not numeric', function() {
+          var velocity = {velocity: {x: "not a number"}};
+
+          b.update(velocity);
+          expect(b.velocity.x).to.equal(1);
+        });
+
+        it('should allow you to zero a value', function() {
+            var velocity = {velocity: {x: "0", y: "0"}};
+
+            b.update(velocity);
+            expect(b.velocity.x).to.equal(0);
+            expect(b.velocity.y).to.equal(0);
+        });
         
         it('should be able to update only y position attribute', function() {
             modifier = {position: {y: 2}};

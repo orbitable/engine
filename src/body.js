@@ -47,18 +47,27 @@ Body.prototype = {
      */
     
     update: function(body) {
+        
         if (body.position) {
-            this.position.x = body.position.x || this.position.x;
-            this.position.y = body.position.y || this.position.y;
+          var x = parseFloat(body.position.x);
+          var y = parseFloat(body.position.y);
+          this.position.x = x === 0 ? 0 : x || this.position.x;
+          this.position.y = y === 0 ? 0 : y || this.position.y;
         }
+
         if (body.velocity) {
-            this.velocity.x = body.velocity.x || this.velocity.x;
-            this.velocity.y = body.velocity.y || this.velocity.y;
+          var x = parseFloat(body.velocity.x);
+          var y = parseFloat(body.velocity.y);
+          this.velocity.x = x === 0 ? 0 : x || this.velocity.x;
+          this.velocity.y = y === 0 ? 0 : y || this.velocity.y;
         }
         
-        this.luminosity = body.luminosity || this.luminosity;
+        this.luminosity = parseFloat(body.luminosity) || this.luminosity;
         
-        this.setMassRadius(body.mass || this.mass, body.radius || this.radius);
+        var mass = parseFloat(body.mass);
+        var radius = parseFloat(body.radius);
+        
+        this.setMassRadius(mass === 0 ? this.mass : mass || this.mass , radius === 0 ? this.radius : radius || this.radius);
         
         this.color = body.color || this.color;
     },
