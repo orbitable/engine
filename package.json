@@ -1,6 +1,6 @@
 {
   "name": "engine",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "An N-Body simulation library",
   "license": "Apache-2.0",
   "main": "src/engine.js",
