@@ -62,7 +62,13 @@ Body.prototype = {
           this.velocity.y = y === 0 ? 0 : y || this.velocity.y;
         }
         
-        this.luminosity = parseFloat(body.luminosity) || this.luminosity;
+        var luminosity = parseFloat(body.luminosity);
+        if (luminosity === 0) {
+            this.luminosity = 0;
+        }
+        else {
+            this.luminosity = luminosity || this.luminosity;
+        }
         
         var mass = parseFloat(body.mass);
         var radius = parseFloat(body.radius);
@@ -169,7 +175,15 @@ Body.prototype = {
     },
     
     copy: function() {
-        var newBody = new Body(this.mass, this.position, this.velocity, this.radius, this.luminosity, this.name, this.color);
+        var newBody = new Body(
+            this.mass, 
+            new Vector(this.position.x,this.position.y), 
+            new Vector(this.velocity.x,this.velocity.y), 
+            this.radius, 
+            this.luminosity, 
+            this.name, 
+            this.color
+        );
         newBody.id = this.id;
         return newBody;
     },
