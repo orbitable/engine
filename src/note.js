@@ -61,6 +61,18 @@ Note.prototype = {
     check: function(currentTime) {
        return (currentTime >= this.startTime && currentTime <= (this.startTime + this.duration)); 
     },
+    
+    copy: function() {
+        var newNote = new Note({
+            position: new Vector(this.position.x,this.position.y),
+            startTime: this.startTime,
+            duration: this.duration,
+            title: this.title,
+            text: this.text
+        });
+        newNote.id = this.id;
+        return newNote;
+    },
 
     /**
      * Returns note info in string forms
