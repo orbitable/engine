@@ -159,6 +159,12 @@ Body.prototype = {
         this.exists = false;
     },
     
+    copy: function() {
+        var newBody = new Body(this.mass, this.position, this.velocity, this.radius, this.luminosity, this.name, this.color);
+        newBody.id = this.id;
+        return newBody;
+    },
+    
     generateColor: function(luminosity,mass,radius) {
         //Constant from Stefan-Boltzmann Law
         var sigma = 5.6704 * Math.pow(10,-8);
