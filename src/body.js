@@ -64,7 +64,10 @@ Body.prototype = {
         
         this.luminosity = parseFloat(body.luminosity) || this.luminosity;
         
-        this.setMassRadius(body.mass || this.mass, body.radius || this.radius);
+        var mass = parseFloat(body.mass);
+        var radius = parseFloat(body.radius);
+        
+        this.setMassRadius(mass === 0 ? this.mass : mass || this.mass , radius === 0 ? this.radius : radius || this.radius);
         
         this.color = body.color || this.color;
     },
