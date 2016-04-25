@@ -29,11 +29,6 @@ function Simulator() {
     this.bodies = [];
     this.notes = [];
     
-    this.notes.push(new Note({position:  new Vector( 149597870700, 189597870700), startTime:  4000000, duration: 4000000, title: "TEST TITLE 1", text: "TEST TEXT 1"}));
-    this.notes.push(new Note({position:  new Vector( 149597870700,-189597870700), startTime:  8000000, duration: 4000000, title: "TEST TITLE 2", text: "TEST TEXT 2"}));
-    this.notes.push(new Note({position:  new Vector(-149597870700, 149597870700), startTime: 12000000, duration: 4000000, title: "TEST TITLE 3", text: "TEST TEXT 3"}));
-    this.notes.push(new Note({position:  new Vector(-149597870700,-149597870700), startTime: 16000000, duration: 4000000, title: "TEST TITLE 4", text: "TEST TEXT 4"}));    
-    
     this.orbitTracker = new OrbitTracker();
 
     this.G = this.bigNum(6.674,-11);             // Establish gravitational constant
@@ -42,7 +37,7 @@ function Simulator() {
     this.step = 0;
     this.simulationTime = 0.0;
     
-    this.selectedBody = {}
+    this.selectedBody = {};
     
     this.pauseFrame = false;
     
@@ -59,18 +54,17 @@ function Simulator() {
 
 Simulator.prototype.bigNum = function(b,e) {
     return b * Math.pow(10,e);
-}
+};
 
 /**
  * Resests the current simulation with a new set of bodies.
  *
  * @param {array} bodies - A collection of body objects
  */
-Simulator.prototype.reset = function(bodies) {
-
+Simulator.prototype.reset = function(bodies,notes) {
   bodies = bodies || [];
+  notes  = notes  || [];
   this.orbitTracker = new OrbitTracker();
-
   this.bodies = bodies.map(function(body) {
     if (body instanceof Body) return body;
 
@@ -80,12 +74,30 @@ Simulator.prototype.reset = function(bodies) {
 
     return new Body(body.mass, position, velocity, body.radius, body.luminosity);
   });
+  this.notes = notes.map(function(note) {
+    if (note instanceof Note) return note;
+    
+    var position = new Vector(note.position.x, note.position.y);
+
+
+    return new Note({
+        title: note.title, 
+        text: note.text, 
+        startTime: note.startTime, 
+        duration: note.duration, 
+        position: position
+    });
+    
+  });
+
 
   this.assignIDs();
   
   this.simulationTime = 0.0;
-  
-  this.orbitTracker = new OrbitTracker(this.bodies[3],this.bodies[0],0);
+  this.step = 0;
+  this.selectedBody = {};
+  this.pauseFrame = false;
+
 
 };
 
@@ -135,7 +147,6 @@ Simulator.prototype.addBody = function(body) {
         body.luminosity
     );
     newBody.id = this.idCounter;
-    // console.log(newBody.id);
     this.idCounter += 1;
     this.bodies.push(newBody);
 };
