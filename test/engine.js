@@ -14,6 +14,7 @@
 
 var _          = require('lodash');
 var Body       = require('../src/body.js');
+var Note       = require('../src/note.js');
 var expect     = require('chai').expect;
 var Simulation = require('../src/engine.js');
 var Vector     = require('../src/vector.js');
@@ -67,6 +68,32 @@ describe('Simulation', function() {
             expect(parsedBody.luminosity).to.equal(1234);
         });
         
+        it('should reset with given notes', function() {
+            var simulation = new Simulation();
+            expect(simulation.notes).to.be.empty;
+
+            var note = {
+                title: "title",
+                text: "text",
+                startTime: 100,
+                duration: 400,
+                position: {x: 1, y: 2}
+            };
+           
+            simulation.reset(null,[note]);
+
+            expect(simulation.notes).not.to.be.empty;
+
+            var parsedNote = simulation.notes[0];
+            expect(parsedNote instanceof Note).to.be.true;
+            expect(parsedNote.title).to.equal(note.title);
+            expect(parsedNote.text).to.equal(note.text);
+            expect(parsedNote.startTime).to.equal(note.startTime);
+            expect(parsedNote.duration).to.equal(note.duration);
+            expect(parsedNote.position.x).to.equal(1);
+            expect(parsedNote.position.y).to.equal(2);
+        });
+        
         it('should reset with actual Body instances given', function() {
             var simulation = new Simulation();
             expect(simulation.bodies).to.be.empty;
@@ -94,14 +121,18 @@ describe('Simulation', function() {
             expect(parsedBody.luminosity).to.equal(1234);
         });
         
-        it('should assign empty body array if passed nothing', function() {
+        it('should assign empty body and note arrays if passed nothing', function() {
             var simulation = new Simulation();
             expect(simulation.bodies).to.be.empty;
-            
+            expect(simulation.notes).to.be.empty;
+
             simulation.addBody(new Body());
+            simulation.addNote(new Note());
 
             simulation.reset();
+
             expect(simulation.bodies).to.be.empty;
+            expect(simulation.notes).to.be.empty;
 
         });
     });
