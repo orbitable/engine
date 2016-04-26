@@ -14,6 +14,7 @@
 
 var Vector = require('./vector.js');
 var PlanetNamer = require('./planetNamer.js');
+var _ = require('lodash');
 
 /**
  * Constucts a new rigid body to include in a simluation system.
@@ -217,22 +218,7 @@ Body.prototype = {
                 color = '#ff0000';
             }
         } else {
-            var mod = mass % 700;
-            if (mod >= 600) {
-                color = 'darkturquoise';
-            } else if (mod >= 500) {
-                color = 'darkseagreen';
-            } else if (mod >= 400) {
-                color = 'lightsalmon';
-            } else if (mod >= 300) {
-                color = 'plum';
-            } else if (mod >= 200) {
-                color = 'lightsteelblue';
-            } else if (mod >= 100) {
-                color = 'lightseagreen';
-            } else {
-                color = 'lightgreen';
-            }
+            return _.sample(['darkturquoise','darkseagreen','lightsalmon','plum','lightsteelblue','lightseagreen','lightgreen']);
         }
         return color;
     }
