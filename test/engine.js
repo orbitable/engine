@@ -219,6 +219,30 @@ describe('Simulation', function() {
     });
   });
   
+  describe('deleteNote', function() {
+    it('should delete notes with given ID', function() {
+        var simulation = new Simulation();
+        expect(simulation.notes).to.be.empty;
+
+        var note = new Note({});
+
+        simulation.addNote(note);
+        expect(simulation.notes).not.to.be.empty;
+
+        var parsedNote = simulation.notes[0];
+        var parsedID = parsedNote.id;
+        
+        expect(parsedNote instanceof Note).to.be.true;
+        
+        simulation.deleteNote(parsedID+1);
+        expect(simulation.notes).not.to.be.empty;
+        
+        simulation.deleteNote(parsedID);
+        expect(simulation.notes).to.be.empty;
+
+    });
+  });
+  
     describe('updateBody', function() {
     it('should update bodies with given ID and data', function() {
         var simulation = new Simulation();
@@ -253,6 +277,32 @@ describe('Simulation', function() {
         expect(parsedBody.position.x).to.equal(1);
         expect(parsedBody2.position.x).to.equal(6);
         expect(parsedBody2.position.y).to.equal(3);
+
+    });
+  });
+  
+    describe('updateNote', function() {
+    it('should update notes with given ID and data', function() {
+        var simulation = new Simulation();
+        expect(simulation.notes).to.be.empty;
+
+        var note1 = new Note({startTime: 1, duration: 1, title: "1", text: "1", position:  {x: 1, y: 1}});
+        var note2 = new Note({startTime: 2, duration: 2, title: "2", text: "2", position:  {x: 2, y: 2}});
+
+        simulation.addNote(note1);
+        simulation.addNote(note2);
+        expect(simulation.notes).not.to.be.empty;
+
+        var parsedNote = simulation.notes[0];
+        var parsedNote2 = simulation.notes[1];
+        var parsedID = parsedNote2.id;
+        
+        expect(parsedNote instanceof Note).to.be.true;
+        
+        simulation.updateNote(parsedID,{position: {x: 6}});
+        expect(parsedNote.position.x).to.equal(1);
+        expect(parsedNote2.position.x).to.equal(6);
+        expect(parsedNote2.position.y).to.equal(2);
 
     });
   });
@@ -567,6 +617,20 @@ describe('Simulation', function() {
 });
   
   describe('update', function() {
+      
+    it('should note affect bodies if pauseFrame flag is sent', function() {
+        var simulation = new Simulation();
+        simulation.addBody({position: {x: 10, y: 0}, radius: 6, mass: 100});
+        simulation.addBody({position: {x: 0, y: 0}, radius: 5, mass: 10});
+           
+        simulation.pauseFrame = true;
+        simulation.update(1);
+        
+        expect(simulation.bodies[0].exists).to.equal(true);
+        expect(simulation.bodies[1].exists).to.equal(true);
+        expect(simulation.bodies[0].mass).to.equal(100);
+        expect(simulation.bodies[1].radius).to.equal(5);
+    });
        
     it('should be deterministic', function() {
         var simulation = new Simulation();
