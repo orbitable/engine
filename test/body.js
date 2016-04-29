@@ -374,13 +374,13 @@ describe('Body', function() {
         it('should return appropriate color', function() {
             var body = new Body();
             
-            expect(body.generateColor(0,601)).to.equal('darkturquoise');
-            expect(body.generateColor(0,501)).to.equal('darkseagreen');
-            expect(body.generateColor(0,401)).to.equal('lightsalmon');
-            expect(body.generateColor(0,301)).to.equal('plum');
-            expect(body.generateColor(0,201)).to.equal('lightsteelblue');
-            expect(body.generateColor(0,101)).to.equal('lightseagreen');
-            expect(body.generateColor(0,  1)).to.equal('lightgreen');
+            expect(body.generateColor(0,601)).to.be.a('string');
+            expect(body.generateColor(0,501)).to.be.a('string');
+            expect(body.generateColor(0,401)).to.be.a('string');
+            expect(body.generateColor(0,301)).to.be.a('string');
+            expect(body.generateColor(0,201)).to.be.a('string');
+            expect(body.generateColor(0,101)).to.be.a('string');
+            expect(body.generateColor(0,  1)).to.be.a('string');
             
             expect(body.generateColor(0.0001,1,1)).to.equal('#1a1aff');
             expect(body.generateColor(0.000000009,1,1)).to.equal('#80d4ff');
