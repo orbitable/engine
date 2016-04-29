@@ -27,6 +27,56 @@ describe('Note', function () {
     expect(n.title).to.be.a('string');
     expect(n.text).to.be.a('string');
   });
+  describe('update', function () {
+    
+    var n = new Note({});
+    
+    beforeEach(function() {
+      n = new Note({startTime: 1, duration: 1, title: "1", text: "1", position:  {x: 1, y: 1}});
+    });
+    
+    it('should be able to update startTime', function() {
+      n.update({startTime: 2});
+      expect(n.startTime).to.equal(2);
+      expect(n.duration).to.equal(1);
+      
+    });
+    
+    it('should be able to update duration', function() {
+      n.update({duration: 2});
+      expect(n.duration).to.equal(2);
+      expect(n.startTime).to.equal(1);
+      
+    });
+    
+    it('should be able to update title', function() {
+      n.update({title: "2"});
+      expect(n.title).to.equal("2");
+      expect(n.startTime).to.equal(1);
+      
+    });
+    
+    it('should be able to update text', function() {
+      n.update({text: "2"});
+      expect(n.text).to.equal("2");
+      expect(n.startTime).to.equal(1);
+      
+    });
+    
+    it('should be able to update position x', function() {
+      n.update({position: {x: 2}});
+      expect(n.position.x).to.equal(2);
+      expect(n.startTime).to.equal(1);
+      
+    });
+    
+    it('should be able to update position y', function() {
+      n.update({position: {y: 2}});
+      expect(n.position.y).to.equal(2);
+      expect(n.startTime).to.equal(1);
+      
+    });
+  });
   describe('check', function () {
     it('should return false if time is too soon', function() {
       var n = new Note({startTime: 100, duration: 100});
@@ -39,6 +89,18 @@ describe('Note', function () {
     it('should return false if time is too late', function() {
       var n = new Note({startTime: 100, duration: 100});
       expect(n.check(250)).to.equal(false);
+    });
+  });
+  describe('copy', function () {
+    it('should return an exact copy', function() {
+      var n = new Note({startTime: 1, duration: 1, title: "1", text: "1", position:  {x: 1, y: 1}});
+      var c = n.copy();
+      expect(c.startTime ).to.equal(1);
+      expect(c.duration  ).to.equal(1);
+      expect(c.title     ).to.equal("1");
+      expect(c.text      ).to.equal("1");
+      expect(c.position.x).to.equal(1);
+      expect(c.position.y).to.equal(1);
     });
   });
   describe('toString', function () {
