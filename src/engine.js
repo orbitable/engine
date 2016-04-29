@@ -149,6 +149,7 @@ Simulator.prototype.addBody = function(body) {
     newBody.id = this.idCounter;
     this.idCounter += 1;
     this.bodies.push(newBody);
+    return newBody;
 };
 
 Simulator.prototype.addNote = function(note) {
@@ -160,7 +161,9 @@ Simulator.prototype.addNote = function(note) {
         note.position = new Vector(note.position.x, note.position.y);
     }
     
-    this.notes.push(new Note(note));
+    var newNote = new Note(note);
+    this.notes.push(newNote);
+    return newNote;
 };
 
 /**
