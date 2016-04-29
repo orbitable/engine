@@ -62,17 +62,18 @@ Body.prototype = {
           this.velocity.y = y === 0 ? 0 : y || this.velocity.y;
         }
         
-        var luminosity = parseFloat(body.luminosity);
-        if (luminosity === 0) {
-            this.luminosity = 0;
-        }
-        else {
-            this.luminosity = luminosity || this.luminosity;
+        if (body.luminosity) {
+            var parsedLuminosity = parseFloat(body.luminosity);
+            if (isNaN(parsedLuminosity)) {
+                this.luminosity = 0;
+            }
+            else {
+                this.luminosity = Math.max(0,parsedLuminosity);
+            }
         }
         
-        var mass = parseFloat(body.mass);
-        var radius = parseFloat(body.radius);
-        
+        var mass = Math.max(0,parseFloat(body.mass));
+        var radius = Math.max(0,parseFloat(body.radius));
         this.setMassRadius(mass === 0 ? this.mass : mass || this.mass , radius === 0 ? this.radius : radius || this.radius);
         
         this.color = body.color || this.color;

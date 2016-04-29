@@ -20,7 +20,7 @@ var Vector = require('../src/vector.js');
 describe('Body', function() {
     
     it('should assign a random name',function() {
-        var body = new Body(1,new Vector(2,3),new Vector(4,5),6,7);
+        var body = new Body(1,new Vector(2,3),new Vector(4,5),6,7,"Name","white");
         expect(body.name).to.be.a('string');
         
     });
@@ -183,6 +183,20 @@ describe('Body', function() {
             expect(b.radius).to.equal(1);
             expect(b.luminosity).to.equal(2);
         });
+        
+        it('should set luminosity to 0 if cant be parsed', function() {
+            modifier = {luminosity: "not a number"};
+            b.update(modifier);
+            
+            expect(b.mass).to.equal(1);
+            expect(b.position.x).to.equal(1);
+            expect(b.position.y).to.equal(1);
+            expect(b.velocity.x).to.equal(1);
+            expect(b.velocity.y).to.equal(1);
+            expect(b.radius).to.equal(1);
+            expect(b.luminosity).to.equal(0);
+        });
+        
         
         it('should be able to update only radius attribute', function() {
             modifier = {radius: 2};
@@ -360,6 +374,22 @@ describe('Body', function() {
          
         });
     });
+    
+  describe('copy', function () {
+    it('should return an exact copy', function() {
+      var b = new Body(1,new Vector(2,3),new Vector(4,5),6,7,"Name","white");
+      var c = b.copy();
+      expect(c.mass ).to.equal(1);
+      expect(c.radius  ).to.equal(6);
+      expect(c.luminosity     ).to.equal(7);
+      expect(c.name      ).to.equal("Name");
+      expect(c.color      ).to.equal("white");
+      expect(c.position.x).to.equal(2);
+      expect(c.position.y).to.equal(3);
+      expect(c.velocity.x).to.equal(4);
+      expect(c.velocity.y).to.equal(5);
+    });
+  });
     
     describe('toString', function() {
         it('should return a string', function() {
