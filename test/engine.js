@@ -357,6 +357,22 @@ describe('setResetBodies', function() {
     });
   });
   
+describe('isEditable', function() {
+    it('should return true if editable', function() {
+        var simulation = new Simulation();
+        expect(simulation.bodies).to.be.empty;
+        simulation.addNote({position: {x: 1000000000}});
+        expect(simulation.isEditable()).to.equal(true); 
+    });
+    it('should return false if not editable', function() {
+        var simulation = new Simulation();
+        expect(simulation.bodies).to.be.empty;
+        simulation.addNote({position: {x: 1000000000}});
+        simulation.update(10);
+        expect(simulation.isEditable()).to.equal(false); 
+    });
+  });
+  
 describe('setResetNotes', function() {
     it('should keep copy of notes', function() {
         var simulation = new Simulation();
