@@ -41,6 +41,12 @@ function Simulator() {
     
     this.pauseFrame = false;
     
+    this.resetState = {
+        bodies: [],
+        notes: []
+    };
+    
+    
     this.assignIDs();
 
 }
@@ -54,6 +60,25 @@ function Simulator() {
 
 Simulator.prototype.bigNum = function(b,e) {
     return b * Math.pow(10,e);
+};
+
+Simulator.prototype.isEditable = function() {
+    return (this.step === 0);
+}
+
+Simulator.prototype.resetLocal = function() {
+    
+    
+    this.bodies = this.resetState.bodies.map(function(body) {
+        return body.copy();
+    });
+    
+    this.notes = this.resetState.notes.map(function(note) {
+        return note.copy();
+    });
+    
+    this.resetValues();
+    
 };
 
 /**
@@ -89,17 +114,36 @@ Simulator.prototype.reset = function(bodies,notes) {
     });
     
   });
-
-
-  this.assignIDs();
   
+  this.setResetBodies();
+  this.setResetNotes();
+  this.resetValues();
+
+};
+
+Simulator.prototype.resetValues = function () {
+    
+  this.assignIDs();
   this.simulationTime = 0.0;
   this.step = 0;
   this.selectedBody = {};
   this.pauseFrame = false;
-
-
+    
 };
+
+Simulator.prototype.setResetBodies = function() {
+    this.resetState.bodies = this.bodies.map(function(body) {
+        return body.copy();
+    });
+};
+
+Simulator.prototype.setResetNotes = function() {
+    this.resetState.notes = this.notes.map(function(note) {
+        return note.copy();
+    });
+};
+
+
 
 /**
  * Reassigns all bodyIDS to ensure they are unique
@@ -133,10 +177,10 @@ Simulator.prototype.assignIDs = function() {
 Simulator.prototype.addBody = function(body) {
 
     if (body.position) {
-        var position = new Vector(body.position.x, body.position.y);
+        var position = new Vector(body.position.x || 0, body.position.y || 0);
     }
     if (body.velocity) {
-        var velocity = new Vector(body.velocity.x, body.velocity.y);
+        var velocity = new Vector(body.velocity.x || 0, body.velocity.y || 0);
     }
 
     var newBody = new Body(
@@ -149,7 +193,11 @@ Simulator.prototype.addBody = function(body) {
     newBody.id = this.idCounter;
     this.idCounter += 1;
     this.bodies.push(newBody);
+    
+    this.setResetBodies();
+    
     return newBody;
+    
 };
 
 Simulator.prototype.addNote = function(note) {
@@ -163,6 +211,9 @@ Simulator.prototype.addNote = function(note) {
     
     var newNote = new Note(note);
     this.notes.push(newNote);
+    
+    this.setResetNotes();
+    
     return newNote;
 };
 
@@ -175,12 +226,17 @@ Simulator.prototype.deleteBody = function(id) {
     this.bodies = this.bodies.filter(function(body) {
         return (body.id != id);
     });
+    
+    this.setResetBodies();
+    
 };
 
 Simulator.prototype.deleteNote = function(id) {
     this.notes = this.notes.filter(function(note) {
         return (note.id != id);
     });
+    
+    this.setResetNotes();
 };
 
 
@@ -198,6 +254,9 @@ Simulator.prototype.updateBody = function(id,data) {
 
         return body;
     });
+    
+    this.setResetBodies();
+    
     // this.bodies = this.bodies.filter(function(body) {
     //     return (body.id === id);
     // }).forEach(function(body) {
@@ -216,6 +275,9 @@ Simulator.prototype.updateNote = function(id,data) {
 
         return note;
     });
+    
+    this.setResetNotes();
+    
 };
 
 /**
