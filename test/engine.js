@@ -307,6 +307,87 @@ describe('Simulation', function() {
     });
   });
   
+  
+  
+  
+describe('resetLocal', function() {
+    it('should reset simulation to last modified state', function() {
+        var simulation = new Simulation();
+        expect(simulation.bodies).to.be.empty;
+        
+        simulation.addBody({});
+        simulation.addBody({position: {x: 1000000000}});
+        simulation.addNote({});
+        simulation.update(40000);
+        
+        expect(simulation.bodies[1].position.x).to.not.equal(1000000000);
+        simulation.resetLocal();
+        expect(simulation.bodies[1].position.x).to.equal(1000000000);
+
+    });
+  });
+  
+  describe('resetValues', function() {
+    it('should reset simulation state data', function() {
+        var simulation = new Simulation();
+        expect(simulation.bodies).to.be.empty;
+        
+        simulation.addBody({});
+        simulation.addBody({position: {x: 1000000000}});
+        simulation.update(40000);
+        
+        simulation.resetValues();
+        
+        expect(simulation.simulationTime).to.equal(0.0);
+        expect(simulation.step).to.equal(0);
+        expect(simulation.selectedBody.id).to.be.a('undefined');
+        expect(simulation.pauseFrame).to.equal(false);
+
+    });
+  });
+  
+describe('setResetBodies', function() {
+    it('should keep copy of bodies', function() {
+        var simulation = new Simulation();
+        expect(simulation.bodies).to.be.empty;
+        
+        var oldBody = simulation.addBody({position: {x: 1000000000}});
+        simulation.bodies[0].position.x = 5;
+        expect(simulation.resetState.bodies[0].position.x).to.equal(1000000000);
+        
+    });
+  });
+  
+describe('isEditable', function() {
+    it('should return true if editable', function() {
+        var simulation = new Simulation();
+        expect(simulation.bodies).to.be.empty;
+        simulation.addNote({position: {x: 1000000000}});
+        expect(simulation.isEditable()).to.equal(true); 
+    });
+    it('should return false if not editable', function() {
+        var simulation = new Simulation();
+        expect(simulation.bodies).to.be.empty;
+        simulation.addNote({position: {x: 1000000000}});
+        simulation.update(10);
+        expect(simulation.isEditable()).to.equal(false); 
+    });
+  });
+  
+describe('setResetNotes', function() {
+    it('should keep copy of notes', function() {
+        var simulation = new Simulation();
+        expect(simulation.bodies).to.be.empty;
+        
+        var oldNote = simulation.addNote({position: {x: 1000000000}});
+        simulation.notes[0].position.x = 5;
+        expect(simulation.resetState.notes[0].position.x).to.equal(1000000000);
+        
+    });
+  });
+  
+  
+  
   describe('checkCollision', function() {
     it('should return true if bodies intersect, false otherwise', function() {
         var simulation = new Simulation();
