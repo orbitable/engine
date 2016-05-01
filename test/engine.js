@@ -317,6 +317,7 @@ describe('resetLocal', function() {
         
         simulation.addBody({});
         simulation.addBody({position: {x: 1000000000}});
+        simulation.addNote({});
         simulation.update(40000);
         
         expect(simulation.bodies[1].position.x).to.not.equal(1000000000);
