@@ -46,9 +46,9 @@ Body.prototype = {
      *
      * @param {Object} body - A body-like object
      */
-    
+
     update: function(body) {
-        
+
         if (body.position) {
           var x = parseFloat(body.position.x);
           var y = parseFloat(body.position.y);
@@ -62,7 +62,7 @@ Body.prototype = {
           this.velocity.x = x === 0 ? 0 : x || this.velocity.x;
           this.velocity.y = y === 0 ? 0 : y || this.velocity.y;
         }
-        
+
         if (body.luminosity) {
             var parsedLuminosity = parseFloat(body.luminosity);
             if (isNaN(parsedLuminosity)) {
@@ -72,12 +72,13 @@ Body.prototype = {
                 this.luminosity = Math.max(0,parsedLuminosity);
             }
         }
-        
+
         var mass = Math.max(0,parseFloat(body.mass));
         var radius = Math.max(0,parseFloat(body.radius));
         this.setMassRadius(mass === 0 ? this.mass : mass || this.mass , radius === 0 ? this.radius : radius || this.radius);
-        
+
         this.color = body.color || this.color;
+        this.hideHabitable = (body.hideHabitable ? true : false); // false if undef
     },
 
     /**
@@ -160,10 +161,10 @@ Body.prototype = {
     toString: function() {
         return " ID: " + this.id +
         " (" + this.name + ")" +
-        " E: " + this.exists + 
-        " P: " + this.position.toString() + 
-        " V: " + this.velocity.toString() + 
-        " M: " + this.mass + 
+        " E: " + this.exists +
+        " P: " + this.position.toString() +
+        " V: " + this.velocity.toString() +
+        " M: " + this.mass +
         " R: " + this.radius +
         " D: " + this.density +
         " L: " + this.luminosity;
@@ -175,21 +176,21 @@ Body.prototype = {
         this.radius = 0;
         this.exists = false;
     },
-    
+
     copy: function() {
         var newBody = new Body(
-            this.mass, 
-            new Vector(this.position.x,this.position.y), 
-            new Vector(this.velocity.x,this.velocity.y), 
-            this.radius, 
-            this.luminosity, 
-            this.name, 
+            this.mass,
+            new Vector(this.position.x,this.position.y),
+            new Vector(this.velocity.x,this.velocity.y),
+            this.radius,
+            this.luminosity,
+            this.name,
             this.color
         );
         newBody.id = this.id;
         return newBody;
     },
-    
+
     generateColor: function(luminosity,mass,radius) {
         //Constant from Stefan-Boltzmann Law
         var sigma = 5.6704 * Math.pow(10,-8);
