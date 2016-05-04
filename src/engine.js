@@ -45,7 +45,7 @@ function Simulator() {
         bodies: [],
         notes: []
     };
-    
+    this.hasBeenModified = false;
     
     this.assignIDs();
 
@@ -71,10 +71,6 @@ Simulator.prototype.resetLocal = function() {
     
     this.bodies = this.resetState.bodies.map(function(body) {
         return body.copy();
-    });
-    
-    this.notes = this.resetState.notes.map(function(note) {
-        return note.copy();
     });
     
     this.resetValues();
@@ -115,6 +111,8 @@ Simulator.prototype.reset = function(bodies,notes) {
     
   });
   
+  this.hasBeenModified = false;
+  
   this.setResetBodies();
   this.setResetNotes();
   this.resetValues();
@@ -132,12 +130,14 @@ Simulator.prototype.resetValues = function () {
 };
 
 Simulator.prototype.setResetBodies = function() {
+    this.hasBeenModified = true;
     this.resetState.bodies = this.bodies.map(function(body) {
         return body.copy();
     });
 };
 
 Simulator.prototype.setResetNotes = function() {
+    this.hasBeenModified = true;
     this.resetState.notes = this.notes.map(function(note) {
         return note.copy();
     });
@@ -208,6 +208,8 @@ Simulator.prototype.addNote = function(note) {
     if (note.position) {
         note.position = new Vector(note.position.x, note.position.y);
     }
+    
+    note.startTime = this.simulationTime;
     
     var newNote = new Note(note);
     this.notes.push(newNote);
