@@ -70,7 +70,13 @@ Body.prototype = {
             }
             else {
                 this.luminosity = Math.max(0,parsedLuminosity);
+                if (this.luminosity >0) {
+                    this.color = body.generateColor(this.luminosity, this.mass,this.radius);
+                }                
             }
+        }
+        else if(['darkturquoise','darkseagreen','lightsalmon','plum','lightsteelblue','lightseagreen','lightgreen'].indexOf(this.color)<0){
+            this.color = body.generateColor(0, this.mass,this.radius);
         }
 
         var mass = Math.max(0,parseFloat(body.mass));
@@ -202,8 +208,8 @@ Body.prototype = {
 
             // this assumes that the radius is stored as the #.## term of #.## *10^8
             // meters, may need to change later
-            var temp = Math.sqrt(lum / (4 * Math.PI * Math.pow(radius * Math.pow(10,8), 2) * sigma));
-
+            var temp = Math.pow(lum / (4 * Math.PI * Math.pow(radius, 2) * sigma),.25);
+            
             if (temp >= 28000) {
                 color = '#1a1aff';
             } else if (temp >= 10000) {
