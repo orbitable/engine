@@ -412,13 +412,13 @@ describe('Body', function() {
             expect(body.generateColor(0,101)).to.be.a('string');
             expect(body.generateColor(0,  1)).to.be.a('string');
             
-            expect(body.generateColor(0.0001,1,1)).to.equal('#1a1aff');
-            expect(body.generateColor(0.000000009,1,1)).to.equal('#80d4ff');
-            expect(body.generateColor(0.0000000015,1,1)).to.equal('#ffffff');
-            expect(body.generateColor(0.000000001,1,1)).to.equal('#ffff80');
-            expect(body.generateColor(0.0000000005,1,1)).to.equal('#ffff1a');
-            expect(body.generateColor(0.00000000025,1,1)).to.equal('#ff6600');
-            expect(body.generateColor(0.0000000001,1,1)).to.equal('#ff0000');
+            expect(body.generateColor(1800,1,6.96*Math.pow(10,8))).to.equal('#1a1aff');
+            expect(body.generateColor(48.7,1,6.96*Math.pow(10,8))).to.equal('#80d4ff');
+            expect(body.generateColor(4.26,1,6.96*Math.pow(10,8))).to.equal('#ffffff');
+            expect(body.generateColor(1.65,1,6.96*Math.pow(10,8))).to.equal('#ffff80');
+            expect(body.generateColor(.94,1,6.96*Math.pow(10,8))).to.equal('#ffff1a');
+            expect(body.generateColor(.31,1,6.96*Math.pow(10,8))).to.equal('#ff6600');
+            expect(body.generateColor(.025,1,6.96*Math.pow(10,8))).to.equal('#ff0000');
             
          
         });
