@@ -71,12 +71,12 @@ Body.prototype = {
             else {
                 this.luminosity = Math.max(0,parsedLuminosity);
                 if (this.luminosity >0) {
-                    this.color = body.generateColor(this.luminosity, this.mass,this.radius);
+                    this.color = this.generateColor(this.luminosity, this.mass,this.radius);
                 }                
             }
         }
         else if(['darkturquoise','darkseagreen','lightsalmon','plum','lightsteelblue','lightseagreen','lightgreen'].indexOf(this.color)<0){
-            this.color = body.generateColor(0, this.mass,this.radius);
+            this.color = this.generateColor(0, this.mass,this.radius);
         }
 
         var mass = Math.max(0,parseFloat(body.mass));
