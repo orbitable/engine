@@ -38,6 +38,24 @@ describe('OrbitTracker', function () {
         });
     });
     
+    describe('completedCallback', function() {
+        it('should call callback function if it exists', function() {
+            
+            var testValue = 0;
+            var testFunction = function() {
+                testValue = 1;
+            };
+            
+            var o = new OrbitTracker(new Body(1,new Vector(1,1)), new Body(1,new Vector(0,0)), 0);
+            o.completeOrbit(1000);
+            expect(testValue).to.equal(0);
+            o.completedCallback = testFunction;
+            o.completeOrbit(1000);
+            expect(testValue).to.equal(1);
+            
+        });
+    });
+    
     describe('getStartQuads', function() {
         it('should set appropriate start and goal quadrants', function() {
             
