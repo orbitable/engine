@@ -27,6 +27,9 @@ OrbitTracker.prototype.initialize = function(startTime) {
     
     this.semiComplete = false;
     
+    this.minDistance = Number.POSITIVE_INFINITY;
+    this.maxDistance = Number.NEGATIVE_INFINITY;
+    
     this.relativePosition = this.targetBody.position.add(this.centerBody.position.scalarProduct(-1));
     this.getStartQuads(this.relativePosition);
 };
@@ -50,7 +53,13 @@ OrbitTracker.prototype.reset = function(targetBody,centerBody,startTime) {
     
     this.minTime = Number.POSITIVE_INFINITY;
     this.maxTime = Number.NEGATIVE_INFINITY;
+    
+    this.semiMinor = -1;
+    this.semiMajor = -1;
+    this.eccentricity = -1;
+    
     this.timeRange = 0;
+    
     
     this.running = false;
     if ((this.targetBody instanceof Body) && (this.centerBody instanceof Body)) {
@@ -103,7 +112,29 @@ OrbitTracker.prototype.completeOrbit = function(time) {
     this.maxTime = Math.max(this.maxTime,thisTime);
     this.timeRange = Math.round((Math.max(0.0,this.maxTime - this.minTime)/this.orbitTime)*100.0);
     
+    this.semiMajor = (this.minDistance + this.maxDistance)/2;
+    this.semiMinor = Math.sqrt(
+        Math.abs(Math.pow(this.semiMajor - this.minDistance,2.0) - Math.pow(this.semiMajor,2.0))
+    );
+    this.eccentricity = Math.sqrt(
+        (1.0 - (Math.pow(this.semiMinor,2.0))/(Math.pow(this.semiMajor,2.0)))
+    );
+    
     this.initialize(time);
+    
+    if (typeof this.completedCallback === 'function') {
+        this.completedCallback();
+    }
+};
+
+OrbitTracker.prototype.checkDistances = function() {
+    var currentDistance = this.centerBody.position.distanceTo(this.targetBody.position);
+    if (currentDistance > this.maxDistance) {
+       this.maxDistance = currentDistance;
+    }
+    if (currentDistance < this.minDistance) {
+       this.minDistance = currentDistance;
+    }
 };
 
 /**
@@ -122,6 +153,7 @@ OrbitTracker.prototype.update = function(updateTime,deltaTime) {
             
             this.checkFull(updateTime);
             this.checkSemi();
+            this.checkDistances();
             this.lastAngle = this.currentAngle;
             
         }
