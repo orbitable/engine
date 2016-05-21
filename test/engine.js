@@ -325,6 +325,33 @@ describe('resetLocal', function() {
         expect(simulation.bodies[1].position.x).to.equal(1000000000);
 
     });
+    
+    it('should set orbit tracker selections to corresponding duplicate bodies', function() {
+        var simulation = new Simulation();
+        expect(simulation.bodies).to.be.empty;
+        
+        simulation.addBody({});
+        simulation.addBody({position: {x: 1000000000}});
+        
+        var cBody = simulation.bodies[0];
+        var tBody = simulation.bodies[1];
+        simulation.updateBody(cBody.id,{name: "Center"});
+        simulation.updateBody(tBody.id,{name: "Target"});
+        simulation.orbitTracker.setCenterBody(cBody);
+        simulation.orbitTracker.setTargetBody(tBody);
+        console.log(simulation.orbitTracker.centerBody);
+        
+        simulation.addNote({});
+        simulation.update(40000);
+        simulation.resetLocal();
+        console.log(simulation.orbitTracker.centerBody);
+        
+        cBody.name = "Old Center";
+        tBody.name = "Old Target";
+        expect(simulation.orbitTracker.centerBody.name).to.equal("Center");
+        expect(simulation.orbitTracker.targetBody.name).to.equal("Target");
+
+    });
   });
   
   describe('resetValues', function() {

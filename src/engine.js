@@ -68,8 +68,9 @@ Simulator.prototype.isEditable = function() {
 
 Simulator.prototype.resetLocal = function() {
     
-    var tID = this.orbitTracker.targetBody.name;
-    var cID = this.orbitTracker.centerBody.name;
+    var targetName = (this.orbitTracker.targetBody || {name: null}).name;
+    var centerName = (this.orbitTracker.centerBody || {name: null}).name;
+    var trackerState = this.orbitTracker.running;
     this.orbitTracker = new OrbitTracker();
     
     
@@ -81,7 +82,7 @@ Simulator.prototype.resetLocal = function() {
     this.orbitTracker.setCenterBody(
         this.bodies.filter(
             function(body) {
-                return (body.name === cID);
+                return (body.name === centerName);
             }
         )[0] || null
     );
@@ -89,10 +90,12 @@ Simulator.prototype.resetLocal = function() {
     this.orbitTracker.setTargetBody(
         this.bodies.filter(
             function(body) {
-                return (body.name === tID);
+                return (body.name === targetName);
             }
         )[0] || null
     );
+    
+    //this.orbitTracker.setState(trackerState,this.simulationTime);
     
     this.resetValues();
     
