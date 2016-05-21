@@ -84,6 +84,7 @@ Body.prototype = {
         this.setMassRadius(mass === 0 ? this.mass : mass || this.mass , radius === 0 ? this.radius : radius || this.radius);
 
         this.color = body.color || this.color;
+        this.name  = body.name  || this.name;
         this.hideHabitable = (body.hideHabitable ? true : false); // false if undef
     },
 
